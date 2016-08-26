@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="wheel_btn_nor">#54a3fa</color>
+    <color name="wheel_btn_pre">#CCCCCC</color>
+    <color name="wheel_start_color">#efE9E9E9</color>
+    <color name="wheel_center_color">#cfE9E9E9</color>
+    <color name="wheel_end_color">#3fE9E9E9</color>
+    <color name="back_color">#ffE9E9E9</color>
+    <color name="default_text_color">#FF585858</color>
+</resources>
