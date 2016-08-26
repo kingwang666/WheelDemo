@@ -635,9 +635,8 @@ public class CharacterPickerView extends FrameLayout implements OnWheelChangedLi
      */
     private void updateCities() {
         int pCurrent = mProvince.getCurrentItem();
-//        mCurrentProviceName = mProvinceDatas[pCurrent];
+        mCurrentProvince = mProvinceDatas.get(pCurrent);
         if (mListCount > 1) {
-            mCurrentProvince = mProvinceDatas.get(pCurrent);
             List<DataModel> cities = mCitisDatasMap.get(mCurrentProvince.Id + "");
             if (cities == null) {
                 cities = new LinkedList<>();
@@ -650,7 +649,9 @@ public class CharacterPickerView extends FrameLayout implements OnWheelChangedLi
             mCity.setCurrentItem(0);
             updateAreas();
         } else {
-            mOneData = mOnlyOneListDatas.get(pCurrent);
+            if (mOnlyOneListDatas != null){
+                mOneData = mOnlyOneListDatas.get(pCurrent);
+            }
         }
     }
 
@@ -659,7 +660,7 @@ public class CharacterPickerView extends FrameLayout implements OnWheelChangedLi
         if (mListCount == 1){
             if (mOneListClickListener != null){
                 if (v.getId() == R.id.confirm_btn) {
-                    mOneListClickListener.onClick(mOneData);
+                    mOneListClickListener.onClick(TextUtils.isEmpty(mOneData) ? mCurrentProvince.Name : mOneData);
                 } else if (v.getId() == R.id.cancel_btn) {
                     mOneListClickListener.onClick(null);
                 }

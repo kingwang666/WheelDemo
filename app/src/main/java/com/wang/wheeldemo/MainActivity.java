@@ -1,8 +1,11 @@
 package com.wang.wheeldemo;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +65,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        CharacterPickerView pickerView = new CharacterPickerView(this);
+        pickerView.setWheelDrawShadows(true);
+        pickerView.setListCount(1);
+        pickerView.setVisibleItem(3);
+        pickerView.setSelectColor(ContextCompat.getColor(this, R.color.colorAccent));
+        pickerView.setProvince(mProvinceDatas);
 
+        ((ViewGroup)view.getParent()).addView(pickerView, new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
 
