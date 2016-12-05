@@ -14,7 +14,9 @@
  *  limitations under the License.
  */
 
-package kankan.wheel.widget;
+package kankan.wheel.widget.lintener;
+
+import kankan.wheel.widget.wheel1.WheelView;
 
 /**
  * Wheel scrolled listener interface.

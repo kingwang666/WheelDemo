@@ -17,23 +17,22 @@
  *  limitations under the License.
  */
 
-package kankan.wheel.widget;
+package kankan.wheel.widget.wheel1;
 
 import java.util.LinkedList;
 import java.util.List;
 
 
 import kankan.wheel.R;
-import kankan.wheel.widget.adapters.AbstractWheelAdapter;
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 import kankan.wheel.widget.adapters.WheelViewAdapter;
+import kankan.wheel.widget.lintener.OnWheelChangedListener;
+import kankan.wheel.widget.lintener.OnWheelClickedListener;
+import kankan.wheel.widget.lintener.OnWheelScrollListener;
 
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
@@ -498,7 +497,7 @@ public class WheelView extends View {
      *
      * @return true is shadows are drawn
      */
-    public boolean drawShadows() {
+    public boolean isDrawShadows() {
         return drawShadows;
     }
 
@@ -1040,7 +1039,7 @@ public class WheelView extends View {
         }
 
         index %= count;
-        return viewAdapter.getItem(index, recycle.getItem(), itemsLayout);
+        return viewAdapter.getItemView(index, recycle.getItem(), itemsLayout);
     }
 
     /**

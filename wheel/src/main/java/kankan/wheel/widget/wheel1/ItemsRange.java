@@ -17,7 +17,7 @@
  *  limitations under the License.
  */
 
-package kankan.wheel.widget;
+package kankan.wheel.widget.wheel1;
 
 /**
  * Range for visible items.

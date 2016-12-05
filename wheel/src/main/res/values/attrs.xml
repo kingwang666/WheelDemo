@@ -14,12 +14,30 @@
         <attr name="cp_textSelectColor" format="color"/>
         <attr name="cp_textSize" format="dimension"/>
         <attr name="cp_textColor" format="color"/>
+        <!--按钮相关-->
+        <attr name="cp_cancelTextColor" format="reference"/>
+        <attr name="cp_cancelText" format="string|reference"/>
+        <attr name="cp_confirmTextColor" format="reference"/>
+        <attr name="cp_confirmText" format="string|reference"/>
         <!--是否循环-->
         <attr name="cp_cycle" format="boolean"/>
         <!--列表个数-->
         <attr name="cp_listCount" format="integer"/>
         <!-- 显示个数-->
         <attr name="cp_visibleItems" format="integer"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="WheelView2">
+        <attr name="pickerview_gravity">
+            <enum name="center" value="17"/>
+            <enum name="left" value="3"/>
+            <enum name="right" value="5"/>
+        </attr>
+        <attr name="pickerview_textSize" format="dimension"/>
+        <attr name="pickerview_textColorOut" format="color"/>
+        <attr name="pickerview_textColorCenter" format="color"/>
+        <attr name="pickerview_dividerColor" format="color"/>
     </declare-styleable>
 
 </resources>

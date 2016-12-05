@@ -14,7 +14,11 @@
  *  limitations under the License.
  */
 
-package kankan.wheel.widget;
+package kankan.wheel.widget.lintener;
+
+import android.view.View;
+
+import kankan.wheel.widget.wheel1.WheelView;
 
 /**
  * Wheel changed listener interface.
@@ -29,5 +33,5 @@ public interface OnWheelChangedListener {
 	 * @param oldValue the old value of current item
 	 * @param newValue the new value of current item
 	 */
-	void onChanged(WheelView wheel, int oldValue, int newValue);
+	void onChanged(View wheel, int oldValue, int newValue);
 }

@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,13 +23,13 @@ import kankan.wheel.widget.lintener.OnWheelChangedListener;
 import kankan.wheel.widget.model.AllLocationsMode;
 import kankan.wheel.widget.model.CityModel;
 import kankan.wheel.widget.model.DataModel;
-import kankan.wheel.widget.wheel1.WheelView;
+import kankan.wheel.widget.wheel2.WheelView2;
 
 /**
  * Created by wang
- * on 2016/4/12
+ * on 2016/5/12
  */
-public class CharacterPickerView<T> extends LinearLayout implements OnWheelChangedListener, View.OnClickListener {
+public class IOSCharacterPickerView extends LinearLayout implements OnWheelChangedListener, View.OnClickListener {
 
     /**
      * 取消按钮
@@ -44,22 +42,22 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
     /**
      * 省的WheelView控件
      */
-    private WheelView mProvince;
+    private WheelView2 mProvince;
     /**
      * 市的WheelView控件
      */
-    private WheelView mCity;
+    private WheelView2 mCity;
     /**
      * 区的WheelView控件
      */
-    private WheelView mArea;
+    private WheelView2 mArea;
 
     /**
      * 所有省
      */
     private List<DataModel> mProvinceDatas = new LinkedList<>();
 
-    private List<T> mOnlyOneListDatas;
+    private List<String> mOnlyOneListDatas;
     /**
      * key - 省 value - 市s
      */
@@ -80,8 +78,6 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      * 区adapter
      */
     private ArrayWheelAdapter mAreaAdapter;
-
-    private T mOneData;
 
     /**
      * 当前省的名称
@@ -112,10 +108,12 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
     private int mAreaId = -1;
 
     private int mAreaPosition = 0;
-    /**
-     * 字的大小
-     */
+
     private int mTextSize;
+    /**
+     * 是否循环
+     */
+    private boolean mIsCycle;
     /**
      * 几级联动
      */
@@ -126,138 +124,65 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      */
     private int mVisibleItems;
 
-    private OnButtonClickListener listener;
 
-    private OnButtonOneListClickListener<T> mOneListClickListener;
 
-    public CharacterPickerView(Context context) {
+    public IOSCharacterPickerView(Context context) {
         super(context);
         init(context, null);
     }
 
-    public CharacterPickerView(Context context, AttributeSet attrs) {
+    public IOSCharacterPickerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public CharacterPickerView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public IOSCharacterPickerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public CharacterPickerView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public IOSCharacterPickerView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
         setOrientation(VERTICAL);
-        LayoutInflater.from(context).inflate(R.layout.provice_city_area, this, true);
+        LayoutInflater.from(context).inflate(R.layout.provice_city_area_ios, this, true);
 
         mCancel = (Button) findViewById(R.id.cancel_btn);
         mConfirm = (Button) findViewById(R.id.confirm_btn);
-        mProvince = (WheelView) findViewById(R.id.id_province);
-        mCity = (WheelView) findViewById(R.id.id_city);
-        mArea = (WheelView) findViewById(R.id.id_area);
-        /**
-         * 是否有顶部和底部阴影
-         */
-        boolean drawShadows = false;
-        /**
-         * 阴影开始颜色
-         */
-        int startColor = 0;
-        /**
-         * 阴影中间颜色
-         */
-        int centerColor = 0;
-        /**
-         * 阴影结束颜色
-         */
-        int endColor = 0;
-        /**
-         * 被选中的背景
-         */
-        int selectBg = 0;
-        /**
-         * 背景
-         */
-        int bg = 0;
-        /**
-         * the text color
-         */
-        int defaultColor = 0;
-        int selectColor = 0;
-        boolean isCycle = false;
-
-        int cancelTextBg = 0;
-        int confirmTextBg = 0;
-
-        String cancelText = null;
-
-        String confirmText = null;
+        mProvince = (WheelView2) findViewById(R.id.id_province);
+        mCity = (WheelView2) findViewById(R.id.id_city);
+        mArea = (WheelView2) findViewById(R.id.id_area);
 
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CharacterPickerView, 0, 0);
         try {
-            drawShadows = typedArray.getBoolean(R.styleable.CharacterPickerView_cp_drawShadows, false);
-            startColor = typedArray.getColor(R.styleable.CharacterPickerView_cp_shadowsColorStart, 0xefE9E9E9);
-            centerColor = typedArray.getColor(R.styleable.CharacterPickerView_cp_shadowsColorCenter, 0xcfE9E9E9);
-            endColor = typedArray.getColor(R.styleable.CharacterPickerView_cp_shadowsColorEnd, 0x3fE9E9E9);
 
-            selectBg = typedArray.getResourceId(R.styleable.CharacterPickerView_cp_wheelSelectBackground, R.drawable.jd_wheel_val);
-            bg = typedArray.getResourceId(R.styleable.CharacterPickerView_cp_wheelBackground, R.drawable.jd_wheel_bg);
-
-            cancelTextBg = typedArray.getResourceId(R.styleable.CharacterPickerView_cp_cancelTextColor, R.drawable.wheel_btn_bg);
-            cancelText = typedArray.getString(R.styleable.CharacterPickerView_cp_cancelText);
-            confirmTextBg = typedArray.getResourceId(R.styleable.CharacterPickerView_cp_confirmTextColor, R.drawable.wheel_btn_bg);
-            confirmText = typedArray.getString(R.styleable.CharacterPickerView_cp_confirmText);
-
-            defaultColor = typedArray.getColor(R.styleable.CharacterPickerView_cp_textDefaultColor, 0xFF585858);
-            selectColor = typedArray.getColor(R.styleable.CharacterPickerView_cp_textSelectColor, 0xFF585858);
-            mTextSize = typedArray.getDimensionPixelSize(R.styleable.CharacterPickerView_cp_textSize, getResources().getDimensionPixelSize(R.dimen.default_size));
-
-            isCycle = typedArray.getBoolean(R.styleable.CharacterPickerView_cp_cycle, false);
-            mListCount = typedArray.getInteger(R.styleable.CharacterPickerView_cp_listCount, 3);
-            mVisibleItems = typedArray.getInteger(R.styleable.CharacterPickerView_cp_visibleItems, 5);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             typedArray.recycle();
         }
 
-        initWheel(drawShadows, startColor, centerColor, endColor, selectBg, bg, defaultColor, selectColor, isCycle);
-        initButton(cancelTextBg, cancelText, confirmTextBg, confirmText);
+        initWheel();
+        initButton();
     }
 
-    private void initButton(int cancelTextBg, String cancelText, int confirmTextBg, String confirmText) {
+    private void initButton() {
         mConfirm.setOnClickListener(this);
-        mConfirm.setTextColor(ContextCompat.getColorStateList(getContext(), confirmTextBg));
-        if (!TextUtils.isEmpty(confirmText)){
-            mConfirm.setText(confirmText);
-        }
         mCancel.setOnClickListener(this);
-        mCancel.setTextColor(ContextCompat.getColorStateList(getContext(), cancelTextBg));
-        if (!TextUtils.isEmpty(cancelText)){
-            mCancel.setText(cancelText);
-        }
     }
 
-    private void initWheel(boolean drawShadows, int startColor, int centerColor, int endColor, int selectBg, int bg, int defaultColor, int selectColor, boolean isCycle) {
-        setWheelDrawShadows(drawShadows);
-        if (drawShadows) {
-            setShadows(startColor,centerColor, endColor);
-        }
-        setDefaultColor(defaultColor);
-        setSelectColor(selectColor);
-        mProvince.addChangingListener(this);
-        mCity.addChangingListener(this);
-        mArea.addChangingListener(this);
-        setSelectBg(selectBg);
-        setBg(bg);
-        setVisibleItem(mVisibleItems);
-        setListCount(mListCount);
-        setCycle(isCycle);
+    private void initWheel() {
+
+        mProvince.setOnWheelChangedListener(this);
+        mCity.setOnWheelChangedListener(this);
+        mArea.setOnWheelChangedListener(this);
+//        setVisibleItem(mVisibleItems);
+        setListCount(/*mListCount*/3);
+        setCycle(mIsCycle);
     }
 
     /**
@@ -266,120 +191,20 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      * @param cycle 循环
      */
     public void setCycle(boolean cycle) {
+        mIsCycle = cycle;
         mProvince.setCyclic(cycle);
         mCity.setCyclic(cycle);
         mArea.setCyclic(cycle);
     }
 
-    public int getSelectColor() {
-        return mProvince.getSelectorColor();
-    }
-
-    /**
-     * 设置选中项颜色
-     *
-     * @param mSelectColor 颜色
-     */
-    public void setSelectColor(int mSelectColor) {
-        mProvince.setSelectorColor(mSelectColor);
-        mCity.setSelectorColor(mSelectColor);
-        mArea.setSelectorColor(mSelectColor);
-    }
-
-    public int getDefaultColor() {
-        return mProvince.getDefaultColor();
-    }
-
-    /**
-     * 设置非选中项颜色
-     *
-     * @param mDefaultColor 颜色
-     */
-    public void setDefaultColor(int mDefaultColor) {
-        mProvince.setDefaultColor(mDefaultColor);
-        mCity.setDefaultColor(mDefaultColor);
-        mArea.setDefaultColor(mDefaultColor);
-    }
-
-
-    /**
-     * 设置字体大小
-     *
-     * @param textSize 设置字体大小
-     */
-    public void setTextSize(int textSize) {
-        mTextSize = textSize;
-        if (mProvinceAdapter != null) {
-            mProvinceAdapter.setTextSize(textSize);
-        }
-        if (mCityAdapter != null) {
-            mCityAdapter.setTextSize(textSize);
-        }
-        if (mAreaAdapter != null) {
-            mAreaAdapter.setTextSize(textSize);
-        }
-    }
 
     public int getTextSize() {
         return mTextSize;
     }
 
     public boolean isCycle() {
-        return mProvince.isCyclic();
+        return mIsCycle;
     }
-
-    /**
-     * 设置表层模糊渐变
-     *
-     * @param drawShadows 是否需要
-     */
-    public void setWheelDrawShadows(boolean drawShadows) {
-        mProvince.setDrawShadows(drawShadows);
-        mCity.setDrawShadows(drawShadows);
-        mArea.setDrawShadows(drawShadows);
-    }
-
-    public boolean getWheelDrawShadows() {
-        return mProvince.isDrawShadows();
-    }
-
-    /**
-     * 设置表层渐变颜色
-     *
-     * @param start  开始颜色
-     * @param center 中间颜色
-     * @param end    结束颜色
-     */
-    public void setShadows(int start, int center, int end) {
-        mProvince.setShadowColor(start, center, end);
-        mCity.setShadowColor(start, center, end);
-        mArea.setShadowColor(start, center, end);
-    }
-
-    /**
-     * 设置选中背景
-     *
-     * @param resId 背景id
-     */
-    public void setSelectBg(int resId) {
-        mProvince.setWheelForeground(resId);
-        mCity.setWheelForeground(resId);
-        mArea.setWheelForeground(resId);
-    }
-
-
-    /**
-     * 设置背景
-     *
-     * @param resId 背景id
-     */
-    public void setBg(int resId) {
-        mProvince.setWheelBackground(resId);
-        mCity.setWheelBackground(resId);
-        mArea.setWheelBackground(resId);
-
-    }
-
 
     /**
      * 设置可见项数目
@@ -425,18 +250,6 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
         return mListCount;
     }
 
-    public void setOnlyOneListDatas(List<T> oneListDatas) {
-        mOnlyOneListDatas = oneListDatas;
-        mProvinceAdapter = new ArrayWheelAdapter<>(getContext(), oneListDatas);
-        mProvinceAdapter.setTextSize(mTextSize);
-        if (mOneData != null) {
-            mProvincePosition = oneListDatas.indexOf(mOneData);
-        }
-        mProvince.setViewAdapter(mProvinceAdapter);
-        int pCurrent = mProvince.getCurrentItem();
-        mOneData = mOnlyOneListDatas.get(pCurrent);
-        mProvince.setCurrentItem(mProvincePosition);
-    }
 
     /**
      * 设置第一个列表数据
@@ -455,7 +268,7 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
                 break;
             }
         }
-        mProvince.setViewAdapter(mProvinceAdapter);
+        mProvince.setAdapter(mProvinceAdapter);
         int pCurrent = mProvince.getCurrentItem();
         mCurrentProvince = mProvinceDatas.get(pCurrent);
         mProvince.setCurrentItem(mProvincePosition);
@@ -516,16 +329,6 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
         mAreaId = areaId;
     }
 
-    /**
-     * 设置默认选中(只有一个列表)
-     */
-    public void setOnlyOneDefault(T oneData) {
-        mOneData = oneData;
-    }
-
-    public void setOnlyOneDefault(int oneDataDefaultPosition) {
-        mProvincePosition = oneDataDefaultPosition;
-    }
 
     /**
      * 设置所有数据
@@ -550,22 +353,7 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
         setArea(mAreaDatasMap);
     }
 
-    /**
-     * 设置按钮监听
-     *
-     * @param listener
-     */
-    public void setListener(OnButtonClickListener listener) {
-        this.listener = listener;
-    }
 
-    public OnButtonOneListClickListener getOneListClickListener() {
-        return mOneListClickListener;
-    }
-
-    public void setOneListClickListener(OnButtonOneListClickListener<T> oneListClickListener) {
-        mOneListClickListener = oneListClickListener;
-    }
 
     @Override
     public void onChanged(View wheel, int oldValue, int newValue) {
@@ -610,9 +398,8 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
         if (mListCount > 2) {
             mCurrentArea = areas.get(0);
             mAreaAdapter = new ArrayWheelAdapter<>(getContext(), areas);
-//            mAreaAdapter.setTextColor(mTextColor);
             mAreaAdapter.setTextSize(mTextSize);
-            mArea.setViewAdapter(mAreaAdapter);
+            mArea.setAdapter(mAreaAdapter);
             mArea.setCurrentItem(0);
 
         }
@@ -624,50 +411,37 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      */
     private void updateCities() {
         int pCurrent = mProvince.getCurrentItem();
-//        mCurrentProviceName = mProvinceDatas[pCurrent];
+        mCurrentProvince = mProvinceDatas.get(pCurrent);
         if (mListCount > 1) {
-            mCurrentProvince = mProvinceDatas.get(pCurrent);
             List<DataModel> cities = mCitisDatasMap.get(mCurrentProvince.Id + "");
             if (cities == null) {
                 cities = new LinkedList<>();
                 cities.add(new DataModel(0, ""));
             }
             mCityAdapter = new ArrayWheelAdapter<>(getContext(), cities);
-//            mCityAdapter.setTextColor(mTextColor);
             mCityAdapter.setTextSize(mTextSize);
-            mCity.setViewAdapter(mCityAdapter);
+            mCity.setAdapter(mCityAdapter);
             mCity.setCurrentItem(0);
             updateAreas();
         } else {
-            mOneData = mOnlyOneListDatas.get(pCurrent);
+            if (mOnlyOneListDatas != null){
+//                mOneData = mOnlyOneListDatas.get(pCurrent);
+            }
         }
     }
 
     @Override
     public void onClick(View v) {
-        if (mListCount == 1) {
-            if (mOneListClickListener != null) {
-                if (v.getId() == R.id.confirm_btn) {
-                    mOneListClickListener.onClick(mOneData);
-                } else if (v.getId() == R.id.cancel_btn) {
-                    mOneListClickListener.onClick(null);
-                }
-            }
-        } else if (listener != null) {
-            if (v.getId() == R.id.confirm_btn) {
-                listener.onClick(mCurrentProvince, mCurrentCity, mCurrentArea);
-            } else if (v.getId() == R.id.cancel_btn) {
-                listener.onClick(null, null, null);
-            }
-        }
+//        if (mListCount == 1){
+//
+//        }
+//        else if (listener != null) {
+//            if (v.getId() == R.id.confirm_btn) {
+//                listener.onClick(mCurrentProvince, mCurrentCity, mCurrentArea);
+//            } else if (v.getId() == R.id.cancel_btn) {
+//                listener.onClick(null, null, null);
+//            }
+//        }
     }
 
-
-    public interface OnButtonClickListener {
-        void onClick(DataModel province, DataModel city, DataModel area);
-    }
-
-    public interface OnButtonOneListClickListener<E> {
-        void onClick(E oneData);
-    }
 }

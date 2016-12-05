@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 /**
  * Abstract Wheel adapter.
  */
-public abstract class AbstractWheelAdapter implements WheelViewAdapter {
+public abstract class AbstractWheelAdapter<T> implements WheelViewAdapter<T> {
     // Observers
     private List<DataSetObserver> datasetObservers;
     
@@ -38,7 +38,7 @@ public abstract class AbstractWheelAdapter implements WheelViewAdapter {
     @Override
     public void registerDataSetObserver(DataSetObserver observer) {
         if (datasetObservers == null) {
-            datasetObservers = new LinkedList<DataSetObserver>();
+            datasetObservers = new LinkedList<>();
         }
         datasetObservers.add(observer);
     }

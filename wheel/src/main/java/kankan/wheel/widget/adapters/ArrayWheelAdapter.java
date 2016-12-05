@@ -25,7 +25,7 @@ import kankan.wheel.widget.model.DataModel;
  * The simple Array wheel adapter
  * @param <T> the element type
  */
-public class ArrayWheelAdapter<T> extends AbstractWheelTextAdapter {
+public class ArrayWheelAdapter<T> extends AbstractWheelTextAdapter<T> {
     
     // items
     private List<T> items;
@@ -46,19 +46,34 @@ public class ArrayWheelAdapter<T> extends AbstractWheelTextAdapter {
     public CharSequence getItemText(int index) {
         if (index >= 0 && index < items.size()) {
             T item = items.get(index);
-            if (item instanceof CharSequence) {
-                return (CharSequence) item;
-            }
-            if (item instanceof DataModel){
-                return ((DataModel) item).Name;
-            }
-            return item.toString();
+            return getItemText(item);
         }
         return null;
     }
 
     @Override
+    public CharSequence getItemText(T item) {
+        if (item instanceof CharSequence) {
+            return (CharSequence) item;
+        }
+        if (item instanceof DataModel){
+            return ((DataModel) item).Name;
+        }
+        return item.toString();
+    }
+
+    @Override
     public int getItemsCount() {
         return items.size();
+    }
+
+    @Override
+    public T getItem(int index) {
+        return items.get(index);
+    }
+
+    @Override
+    public int indexOf(T o) {
+        return items.indexOf(o);
     }
 }

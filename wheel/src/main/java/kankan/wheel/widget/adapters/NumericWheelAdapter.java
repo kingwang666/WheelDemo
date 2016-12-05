@@ -21,7 +21,7 @@ import android.content.Context;
 /**
  * Numeric Wheel adapter.
  */
-public class NumericWheelAdapter extends AbstractWheelTextAdapter {
+public class NumericWheelAdapter extends AbstractWheelTextAdapter<Integer> {
     
     /** The default min value */
     public static final int DEFAULT_MAX_VALUE = 9;
@@ -81,5 +81,15 @@ public class NumericWheelAdapter extends AbstractWheelTextAdapter {
     @Override
     public int getItemsCount() {
         return maxValue - minValue + 1;
-    }    
+    }
+
+    @Override
+    public Integer getItem(int index) {
+        return minValue + index;
+    }
+
+    @Override
+    public int indexOf(Integer o) {
+        return o - minValue;
+    }
 }

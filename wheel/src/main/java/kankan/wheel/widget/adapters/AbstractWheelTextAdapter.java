@@ -34,7 +34,7 @@ import kankan.wheel.R;
 /**
  * Abstract wheel adapter provides common functionality for adapters.
  */
-public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
+public abstract class AbstractWheelTextAdapter<T> extends AbstractWheelAdapter<T> {
     
     /** Text view resource. Used as a default view for adapter. */
     public static final int TEXT_VIEW_ITEM_RESOURCE = -1;
@@ -184,10 +184,14 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
      * @param index the item index
      * @return the text of specified items
      */
-    protected abstract CharSequence getItemText(int index);
+    public abstract CharSequence getItemText(int index);
+
+    public CharSequence getItemText(T t){
+        return "";
+    }
 
     @Override
-    public View getItem(int index, View convertView, ViewGroup parent) {
+    public View getItemView(int index, View convertView, ViewGroup parent) {
         if (index >= 0 && index < getItemsCount()) {
             if (convertView == null) {
                 convertView = getView(itemResourceId, parent);
