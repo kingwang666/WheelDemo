@@ -5,22 +5,20 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.SparseArrayCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import kankan.wheel.R;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
+import kankan.wheel.widget.lintener.OnButtonClickListener;
 import kankan.wheel.widget.lintener.OnWheelChangedListener;
 import kankan.wheel.widget.model.AllLocationsMode;
 import kankan.wheel.widget.model.CityModel;
@@ -31,7 +29,7 @@ import kankan.wheel.widget.wheel1.WheelView;
  * Created by wang
  * on 2016/4/12
  */
-public class CharacterPickerView<T> extends LinearLayout implements OnWheelChangedListener, View.OnClickListener {
+public class CharacterPickerView extends LinearLayout implements OnWheelChangedListener, View.OnClickListener {
 
     /**
      * 取消按钮
@@ -59,15 +57,14 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      */
     private List<DataModel> mProvinceDatas = new LinkedList<>();
 
-    private List<T> mOnlyOneListDatas;
     /**
      * key - 省 value - 市s
      */
-    private Map<String, List<DataModel>> mCitisDatasMap = new HashMap<>();
+    private SparseArrayCompat<List<DataModel>> mCitisDatasMap = new SparseArrayCompat<>();
     /**
      * key - 市 values - 区s
      */
-    private Map<String, List<DataModel>> mAreaDatasMap = new HashMap<>();
+    private SparseArrayCompat<List<DataModel>> mAreaDatasMap = new SparseArrayCompat<>();
     /**
      * 省adapter
      */
@@ -81,7 +78,6 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      */
     private ArrayWheelAdapter mAreaAdapter;
 
-    private T mOneData;
 
     /**
      * 当前省的名称
@@ -113,22 +109,13 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
 
     private int mAreaPosition = 0;
     /**
-     * 字的大小
-     */
-    private int mTextSize;
-    /**
      * 几级联动
      */
     private int mListCount;
 
-    /**
-     * 列表显示个数
-     */
-    private int mVisibleItems;
 
     private OnButtonClickListener listener;
 
-    private OnButtonOneListClickListener<T> mOneListClickListener;
 
     public CharacterPickerView(Context context) {
         super(context);
@@ -189,10 +176,13 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
          */
         int defaultColor = 0;
         int selectColor = 0;
+        int textSize = 0;
         boolean isCycle = false;
 
         int cancelTextBg = 0;
         int confirmTextBg = 0;
+
+        int visibleItems = 3;
 
         String cancelText = null;
 
@@ -215,39 +205,40 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
 
             defaultColor = typedArray.getColor(R.styleable.CharacterPickerView_cp_textDefaultColor, 0xFF585858);
             selectColor = typedArray.getColor(R.styleable.CharacterPickerView_cp_textSelectColor, 0xFF585858);
-            mTextSize = typedArray.getDimensionPixelSize(R.styleable.CharacterPickerView_cp_textSize, getResources().getDimensionPixelSize(R.dimen.default_size));
+            textSize = typedArray.getDimensionPixelSize(R.styleable.CharacterPickerView_cp_textSize, getResources().getDimensionPixelSize(R.dimen.default_size));
 
             isCycle = typedArray.getBoolean(R.styleable.CharacterPickerView_cp_cycle, false);
             mListCount = typedArray.getInteger(R.styleable.CharacterPickerView_cp_listCount, 3);
-            mVisibleItems = typedArray.getInteger(R.styleable.CharacterPickerView_cp_visibleItems, 5);
+            visibleItems = typedArray.getInteger(R.styleable.CharacterPickerView_cp_visibleItems, visibleItems);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             typedArray.recycle();
         }
 
-        initWheel(drawShadows, startColor, centerColor, endColor, selectBg, bg, defaultColor, selectColor, isCycle);
+        initWheel(drawShadows, startColor, centerColor, endColor, selectBg, bg, defaultColor, selectColor, isCycle, visibleItems, textSize);
         initButton(cancelTextBg, cancelText, confirmTextBg, confirmText);
     }
 
     private void initButton(int cancelTextBg, String cancelText, int confirmTextBg, String confirmText) {
         mConfirm.setOnClickListener(this);
         mConfirm.setTextColor(ContextCompat.getColorStateList(getContext(), confirmTextBg));
-        if (!TextUtils.isEmpty(confirmText)){
+        if (!TextUtils.isEmpty(confirmText)) {
             mConfirm.setText(confirmText);
         }
         mCancel.setOnClickListener(this);
         mCancel.setTextColor(ContextCompat.getColorStateList(getContext(), cancelTextBg));
-        if (!TextUtils.isEmpty(cancelText)){
+        if (!TextUtils.isEmpty(cancelText)) {
             mCancel.setText(cancelText);
         }
     }
 
-    private void initWheel(boolean drawShadows, int startColor, int centerColor, int endColor, int selectBg, int bg, int defaultColor, int selectColor, boolean isCycle) {
+    private void initWheel(boolean drawShadows, int startColor, int centerColor, int endColor, int selectBg, int bg, int defaultColor, int selectColor, boolean isCycle, int visibleItems, int textSize) {
         setWheelDrawShadows(drawShadows);
         if (drawShadows) {
-            setShadows(startColor,centerColor, endColor);
+            setShadows(startColor, centerColor, endColor);
         }
+        setTextSize(textSize);
         setDefaultColor(defaultColor);
         setSelectColor(selectColor);
         mProvince.addChangingListener(this);
@@ -255,9 +246,10 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
         mArea.addChangingListener(this);
         setSelectBg(selectBg);
         setBg(bg);
-        setVisibleItem(mVisibleItems);
+        setVisibleItem(visibleItems);
         setListCount(mListCount);
         setCycle(isCycle);
+
     }
 
     /**
@@ -308,20 +300,14 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      * @param textSize 设置字体大小
      */
     public void setTextSize(int textSize) {
-        mTextSize = textSize;
-        if (mProvinceAdapter != null) {
-            mProvinceAdapter.setTextSize(textSize);
-        }
-        if (mCityAdapter != null) {
-            mCityAdapter.setTextSize(textSize);
-        }
-        if (mAreaAdapter != null) {
-            mAreaAdapter.setTextSize(textSize);
-        }
+        mProvince.setTextSize(textSize);
+        mCity.setTextSize(textSize);
+        mArea.setTextSize(textSize);
+
     }
 
     public int getTextSize() {
-        return mTextSize;
+        return mProvince.getTextSize();
     }
 
     public boolean isCycle() {
@@ -387,14 +373,13 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      * @param count 数目
      */
     public void setVisibleItem(int count) {
-        mVisibleItems = count;
         mProvince.setVisibleItems(count);
         mCity.setVisibleItems(count);
         mArea.setVisibleItems(count);
     }
 
     public int getVisibleItem() {
-        return mVisibleItems;
+        return mProvince.getVisibleItems();
     }
 
     /**
@@ -403,13 +388,11 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      * @param count 数目
      */
     public void setListCount(int count) {
-        count = count < 1 ? 1 : count > 3 ? 3 : count;
+        if (count < 2 || count > 3) {
+            throw new IllegalStateException("this list count must is 2 or 3");
+        }
         mListCount = count;
         switch (count) {
-            case 1:
-                mCity.setVisibility(GONE);
-                mArea.setVisibility(GONE);
-                break;
             case 2:
                 mCity.setVisibility(VISIBLE);
                 mArea.setVisibility(GONE);
@@ -425,19 +408,6 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
         return mListCount;
     }
 
-    public void setOnlyOneListDatas(List<T> oneListDatas) {
-        mOnlyOneListDatas = oneListDatas;
-        mProvinceAdapter = new ArrayWheelAdapter<>(getContext(), oneListDatas);
-        mProvinceAdapter.setTextSize(mTextSize);
-        if (mOneData != null) {
-            mProvincePosition = oneListDatas.indexOf(mOneData);
-        }
-        mProvince.setViewAdapter(mProvinceAdapter);
-        int pCurrent = mProvince.getCurrentItem();
-        mOneData = mOnlyOneListDatas.get(pCurrent);
-        mProvince.setCurrentItem(mProvincePosition);
-    }
-
     /**
      * 设置第一个列表数据
      *
@@ -446,8 +416,6 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
     public void setProvince(List<DataModel> province) {
         mProvinceDatas = province;
         mProvinceAdapter = new ArrayWheelAdapter<>(getContext(), mProvinceDatas);
-//        mProvinceAdapter.setTextColor(mTextColor);
-        mProvinceAdapter.setTextSize(mTextSize);
         for (int i = 0; i < mProvinceDatas.size(); i++) {
             DataModel data = mProvinceDatas.get(i);
             if (data.Id == mProvinceId) {
@@ -455,7 +423,7 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
                 break;
             }
         }
-        mProvince.setViewAdapter(mProvinceAdapter);
+        mProvince.setAdapter(mProvinceAdapter);
         int pCurrent = mProvince.getCurrentItem();
         mCurrentProvince = mProvinceDatas.get(pCurrent);
         mProvince.setCurrentItem(mProvincePosition);
@@ -466,9 +434,9 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      *
      * @param city
      */
-    public void setCity(Map<String, List<DataModel>> city) {
+    public void setCity(SparseArrayCompat<List<DataModel>> city) {
         mCitisDatasMap = city;
-        List<DataModel> temp_city = city.get(mProvinceId + "");
+        List<DataModel> temp_city = city.get(mProvinceId);
         if (temp_city != null) {
             for (int i = 0; i < temp_city.size(); i++) {
                 DataModel data = temp_city.get(i);
@@ -487,9 +455,9 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      *
      * @param area
      */
-    public void setArea(Map<String, List<DataModel>> area) {
+    public void setArea(SparseArrayCompat<List<DataModel>> area) {
         mAreaDatasMap = area;
-        List<DataModel> temp_area = area.get(mCityId + "");
+        List<DataModel> temp_area = area.get(mCityId);
         if (temp_area != null) {
             for (int i = 0; i < temp_area.size(); i++) {
                 DataModel data = temp_area.get(i);
@@ -516,16 +484,6 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
         mAreaId = areaId;
     }
 
-    /**
-     * 设置默认选中(只有一个列表)
-     */
-    public void setOnlyOneDefault(T oneData) {
-        mOneData = oneData;
-    }
-
-    public void setOnlyOneDefault(int oneDataDefaultPosition) {
-        mProvincePosition = oneDataDefaultPosition;
-    }
 
     /**
      * 设置所有数据
@@ -540,9 +498,9 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
             if (cities != null) {
                 for (CityModel city : cities) {
                     temp_cities.add(new DataModel(city.Id, city.Name));
-                    mAreaDatasMap.put(city.Id + "", city.Districts);
+                    mAreaDatasMap.put(city.Id, city.Districts);
                 }
-                mCitisDatasMap.put(location.Id + "", temp_cities);
+                mCitisDatasMap.put(location.Id, temp_cities);
             }
         }
         setProvince(mProvinceDatas);
@@ -555,17 +513,10 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      *
      * @param listener
      */
-    public void setListener(OnButtonClickListener listener) {
+    public void setButtonClickListener(OnButtonClickListener listener) {
         this.listener = listener;
     }
 
-    public OnButtonOneListClickListener getOneListClickListener() {
-        return mOneListClickListener;
-    }
-
-    public void setOneListClickListener(OnButtonOneListClickListener<T> oneListClickListener) {
-        mOneListClickListener = oneListClickListener;
-    }
 
     @Override
     public void onChanged(View wheel, int oldValue, int newValue) {
@@ -576,7 +527,7 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
         } else if (wheel == mArea) {
             mCurrentArea = new DataModel(0, "");
             if (!TextUtils.isEmpty(mCurrentCity.Name)) {
-                List<DataModel> areas = mAreaDatasMap.get(mCurrentCity.Id + "");
+                List<DataModel> areas = mAreaDatasMap.get(mCurrentCity.Id);
                 if (areas != null && areas.size() > 0) {
                     mCurrentArea = areas.get(newValue);
                 }
@@ -591,7 +542,7 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      */
     private void updateAreas() {
         int pCurrent = mCity.getCurrentItem();
-        List<DataModel> cities = mCitisDatasMap.get(mCurrentProvince.Id + "");
+        List<DataModel> cities = mCitisDatasMap.get(mCurrentProvince.Id);
         List<DataModel> areas;
         if (cities == null) {
             cities = new LinkedList<>();
@@ -601,7 +552,7 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
             mCurrentCity = cities.get(pCurrent);
         } else {
             mCurrentCity = cities.get(pCurrent);
-            areas = mAreaDatasMap.get(mCurrentCity.Id + "");
+            areas = mAreaDatasMap.get(mCurrentCity.Id);
             if (areas == null) {
                 areas = new LinkedList<>();
                 areas.add(new DataModel(0, ""));
@@ -610,9 +561,7 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
         if (mListCount > 2) {
             mCurrentArea = areas.get(0);
             mAreaAdapter = new ArrayWheelAdapter<>(getContext(), areas);
-//            mAreaAdapter.setTextColor(mTextColor);
-            mAreaAdapter.setTextSize(mTextSize);
-            mArea.setViewAdapter(mAreaAdapter);
+            mArea.setAdapter(mAreaAdapter);
             mArea.setCurrentItem(0);
 
         }
@@ -624,50 +573,29 @@ public class CharacterPickerView<T> extends LinearLayout implements OnWheelChang
      */
     private void updateCities() {
         int pCurrent = mProvince.getCurrentItem();
-//        mCurrentProviceName = mProvinceDatas[pCurrent];
-        if (mListCount > 1) {
-            mCurrentProvince = mProvinceDatas.get(pCurrent);
-            List<DataModel> cities = mCitisDatasMap.get(mCurrentProvince.Id + "");
-            if (cities == null) {
-                cities = new LinkedList<>();
-                cities.add(new DataModel(0, ""));
-            }
-            mCityAdapter = new ArrayWheelAdapter<>(getContext(), cities);
-//            mCityAdapter.setTextColor(mTextColor);
-            mCityAdapter.setTextSize(mTextSize);
-            mCity.setViewAdapter(mCityAdapter);
-            mCity.setCurrentItem(0);
-            updateAreas();
-        } else {
-            mOneData = mOnlyOneListDatas.get(pCurrent);
+        mCurrentProvince = mProvinceDatas.get(pCurrent);
+        List<DataModel> cities = mCitisDatasMap.get(mCurrentProvince.Id);
+        if (cities == null) {
+            cities = new LinkedList<>();
+            cities.add(new DataModel(0, ""));
         }
+        mCityAdapter = new ArrayWheelAdapter<>(getContext(), cities);
+        mCity.setAdapter(mCityAdapter);
+        mCity.setCurrentItem(0);
+        updateAreas();
+
     }
 
     @Override
     public void onClick(View v) {
-        if (mListCount == 1) {
-            if (mOneListClickListener != null) {
-                if (v.getId() == R.id.confirm_btn) {
-                    mOneListClickListener.onClick(mOneData);
-                } else if (v.getId() == R.id.cancel_btn) {
-                    mOneListClickListener.onClick(null);
-                }
-            }
-        } else if (listener != null) {
+        if (listener != null) {
             if (v.getId() == R.id.confirm_btn) {
                 listener.onClick(mCurrentProvince, mCurrentCity, mCurrentArea);
             } else if (v.getId() == R.id.cancel_btn) {
-                listener.onClick(null, null, null);
+                listener.onCancel();
             }
         }
     }
 
-
-    public interface OnButtonClickListener {
-        void onClick(DataModel province, DataModel city, DataModel area);
-    }
-
-    public interface OnButtonOneListClickListener<E> {
-        void onClick(E oneData);
-    }
 }
+

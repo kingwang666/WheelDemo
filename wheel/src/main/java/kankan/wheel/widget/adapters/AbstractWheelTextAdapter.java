@@ -16,9 +16,6 @@
 package kankan.wheel.widget.adapters;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -26,10 +23,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import kankan.wheel.R;
 
 /**
  * Abstract wheel adapter provides common functionality for adapters.
@@ -45,10 +39,7 @@ public abstract class AbstractWheelTextAdapter<T> extends AbstractWheelAdapter<T
 
     
 
-    
-    // Text settings
-//    private int textColor;
-    private int textSize;
+
     
     // Current context
     protected Context context;
@@ -90,45 +81,9 @@ public abstract class AbstractWheelTextAdapter<T> extends AbstractWheelAdapter<T
         itemResourceId = itemResource;
         itemTextResourceId = itemTextResource;
 //        textSize = context.getResources().getDimensionPixelSize(R.dimen.default_size);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            textColor = context.getColor(R.color.default_text_color);
-//        } else {
-//            textColor = context.getResources().getColor(R.color.default_text_color);
-//        }
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-    
-//    /**
-//     * Gets text color
-//     * @return the text color
-//     */
-//    public int getTextColor() {
-//        return textColor;
-//    }
-//
-//    /**
-//     * Sets text color
-//     * @param textColor the text color to set
-//     */
-//    public void setTextColor(int textColor) {
-//        this.textColor = textColor;
-//    }
-//
-    /**
-     * Gets text size
-     * @return the text size
-     */
-    public int getTextSize() {
-        return textSize;
-    }
-//
-    /**
-     * Sets text size
-     * @param textSize the text size to set
-     */
-    public void setTextSize(int textSize) {
-        this.textSize = textSize;
-    }
+
     
     /**
      * Gets resource Id for items views
@@ -191,7 +146,7 @@ public abstract class AbstractWheelTextAdapter<T> extends AbstractWheelAdapter<T
     }
 
     @Override
-    public View getItemView(int index, View convertView, ViewGroup parent) {
+    public View getItemView(int index, View convertView, ViewGroup parent, int textSize) {
         if (index >= 0 && index < getItemsCount()) {
             if (convertView == null) {
                 convertView = getView(itemResourceId, parent);
@@ -205,7 +160,7 @@ public abstract class AbstractWheelTextAdapter<T> extends AbstractWheelAdapter<T
                 textView.setText(text);
     
                 if (itemResourceId == TEXT_VIEW_ITEM_RESOURCE) {
-                    configureTextView(textView);
+                    configureTextView(textView, textSize);
                 }
             }
             return convertView;
@@ -214,12 +169,12 @@ public abstract class AbstractWheelTextAdapter<T> extends AbstractWheelAdapter<T
     }
 
     @Override
-    public View getEmptyItem(View convertView, ViewGroup parent) {
+    public View getEmptyItem(View convertView, ViewGroup parent, int textSize) {
         if (convertView == null) {
             convertView = getView(emptyItemResourceId, parent);
         }
         if (emptyItemResourceId == TEXT_VIEW_ITEM_RESOURCE && convertView instanceof TextView) {
-            configureTextView((TextView)convertView);
+            configureTextView((TextView)convertView, textSize);
         }
             
         return convertView;
@@ -229,14 +184,11 @@ public abstract class AbstractWheelTextAdapter<T> extends AbstractWheelAdapter<T
      * Configures text view. Is called for the TEXT_VIEW_ITEM_RESOURCE views.
      * @param view the text view to be configured
      */
-    protected void configureTextView(TextView view) {
-//        view.setTextColor(textColor);
+    protected void configureTextView(TextView view, int textSize) {
         view.setGravity(Gravity.CENTER);
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         view.setEllipsize(TextUtils.TruncateAt.END);
         view.setLines(1);
-//        view.setCompoundDrawablePadding(20);
-//        view.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
     }
     
     /**

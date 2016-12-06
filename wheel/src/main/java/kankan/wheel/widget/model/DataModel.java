@@ -1,7 +1,8 @@
 package kankan.wheel.widget.model;
 
 /**
- * Created by jiudeng009 on 2016/4/12.
+ * Created by wang
+ * on 2016/4/12
  */
 public class DataModel {
     public int Id;

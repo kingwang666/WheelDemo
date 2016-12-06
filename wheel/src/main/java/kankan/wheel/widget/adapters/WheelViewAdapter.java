@@ -37,9 +37,10 @@ public interface WheelViewAdapter<T> {
      * @param index       the item index
      * @param convertView the old view to reuse if possible
      * @param parent      the parent that this view will eventually be attached to
+     * @param textSize
      * @return the wheel item View
      */
-    View getItemView(int index, View convertView, ViewGroup parent);
+    View getItemView(int index, View convertView, ViewGroup parent, int textSize);
 
     /**
      * Gets a wheel item by index.
@@ -64,9 +65,10 @@ public interface WheelViewAdapter<T> {
      *
      * @param convertView the old view to reuse if possible
      * @param parent      the parent that this view will eventually be attached to
+     * @param textSize
      * @return the empty item View
      */
-    View getEmptyItem(View convertView, ViewGroup parent);
+    View getEmptyItem(View convertView, ViewGroup parent, int textSize);
 
     /**
      * Register an observer that is called when changes happen to the data used by this adapter.

@@ -1,11 +1,9 @@
 package com.wang.wheeldemo;
 
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
-import android.view.ViewGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,16 +11,17 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
+import kankan.wheel.widget.lintener.OnButtonClickListener;
 import kankan.wheel.widget.model.AllLocationsMode;
 import kankan.wheel.widget.model.DataModel;
 import kankan.wheel.widget.provinceCityArea.CharacterPickerView;
 import kankan.wheel.widget.provinceCityArea.IOSCharacterPickerView;
+import kankan.wheel.widget.wheel1.WheelView;
 import kankan.wheel.widget.wheel2.WheelView2;
 
 
@@ -33,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
 
     private List<DataModel> mProvinceDatas;
 
-    private Map<String, List<DataModel>> mCitisDatasMap = new HashMap<>();
+    private SparseArrayCompat<List<DataModel>> mCitisDatasMap = new SparseArrayCompat<>();
 
-    private Map<String, List<DataModel>> mAreaDatasMap = new HashMap<>();
+    private SparseArrayCompat<List<DataModel>> mAreaDatasMap = new SparseArrayCompat<>();
 
     List<AllLocationsMode> responses = new LinkedList<>();
 
@@ -46,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
     private IOSCharacterPickerView mIOS;
 
+    private WheelView mWheel;
+
+    private WheelView2 mWheel2;
 
 
     @Override
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         view = (CharacterPickerView) findViewById(R.id.test);
         mIOS = (IOSCharacterPickerView) findViewById(R.id.test2);
+        mWheel = (WheelView) findViewById(R.id.wheel_test);
+        mWheel2 = (WheelView2) findViewById(R.id.wheel2_test);
         initJsonData();
 
         initDatas();
@@ -61,27 +65,44 @@ public class MainActivity extends AppCompatActivity {
         view.setProvince(mProvinceDatas);
         view.setCity(mCitisDatasMap);
         view.setArea(mAreaDatasMap);
-//        mWheelView2.setAdapter(new ArrayWheelAdapter(this, mProvinceDatas));
+
         mIOS.setDefault(2, 202, 2202);
         mIOS.setProvince(mProvinceDatas);
         mIOS.setCity(mCitisDatasMap);
         mIOS.setArea(mAreaDatasMap);
 
-        view.setListener(new CharacterPickerView.OnButtonClickListener() {
+
+        mWheel2.setAdapter(new ArrayWheelAdapter<>(this, mProvinceDatas));
+        mWheel2.setCurrentItem(2);
+
+        ArrayWheelAdapter adapter = new ArrayWheelAdapter<>(this, mProvinceDatas);
+        mWheel.setAdapter(adapter);
+        mWheel.setCurrentItem(0);
+
+        view.setButtonClickListener(new OnButtonClickListener() {
             @Override
             public void onClick(DataModel province, DataModel city, DataModel area) {
                 Log.d("test", province.Name + "  " + city.Name + "  " + area.Name);
             }
+
+            @Override
+            public void onCancel() {
+                Log.d("test", "cancel");
+            }
         });
 
-        CharacterPickerView pickerView = new CharacterPickerView(this);
-        pickerView.setWheelDrawShadows(true);
-        pickerView.setListCount(1);
-        pickerView.setVisibleItem(3);
-        pickerView.setSelectColor(ContextCompat.getColor(this, R.color.colorAccent));
-        pickerView.setProvince(mProvinceDatas);
+        mIOS.setButtonClickListener(new OnButtonClickListener() {
+            @Override
+            public void onClick(DataModel province, DataModel city, DataModel area) {
+                Log.d("test", province.Name + "  " + city.Name + "  " + area.Name);
+            }
 
-        ((ViewGroup) view.getParent()).addView(pickerView, new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            @Override
+            public void onCancel() {
+                Log.d("test", "cancel");
+            }
+        });
+
     }
 
 
@@ -126,10 +147,10 @@ public class MainActivity extends AppCompatActivity {
                         String area = jsonAreas.getJSONObject(k).getString("s");// ���������
                         mAreasDatas.add(new DataModel(i * 1000 + j * 100 + k, area));
                     }
-                    mAreaDatasMap.put(i * 100 + j + "", mAreasDatas);
+                    mAreaDatasMap.put(i * 100 + j, mAreasDatas);
                 }
 
-                mCitisDatasMap.put(i + "", mCitiesDatas);
+                mCitisDatasMap.put(i, mCitiesDatas);
             }
 
         } catch (JSONException e) {

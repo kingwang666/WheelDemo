@@ -23,4 +23,23 @@
         android:layout_height="wrap_content">
 
     </kankan.wheel.widget.provinceCityArea.IOSCharacterPickerView>
+
+
+    <kankan.wheel.widget.wheel1.WheelView
+        android:id="@+id/wheel_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:wv_cycle="true"
+        app:wv_drawShadows="true"
+        app:wv_textSelectColor="@color/colorAccent"/>
+
+    <kankan.wheel.widget.wheel2.WheelView2
+        android:id="@+id/wheel2_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:wv2_textColorCenter="@color/colorAccent"
+        app:wv2_visibleItems="4"
+        app:wv2_cycle="true"/>
+
+
 </LinearLayout>

@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.support.annotation.ColorInt;
+import android.support.annotation.Px;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -23,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import kankan.wheel.R;
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 import kankan.wheel.widget.adapters.WheelViewAdapter;
-import kankan.wheel.widget.lintener.LoopViewGestureListener;
+import kankan.wheel.widget.lintener.WheelViewGestureListener;
 import kankan.wheel.widget.lintener.OnWheelChangedListener;
 
 /**
@@ -56,7 +58,6 @@ public class WheelView2 extends View {
 
     private String label;//附加单位
     int textSize;//选项的文字大小
-    boolean customTextSize;//自定义文字大小，为true则用于使setTextSize函数无效，只能通过xml修改
     int maxTextWidth;
     int maxTextHeight;
     float itemHeight;//每行高度
@@ -67,7 +68,7 @@ public class WheelView2 extends View {
 
     // 条目间距倍数
     static final float lineSpacingMultiplier = 1.5F;
-    boolean isLoop;
+    boolean isCyclic;
 
     // 第一条线Y坐标值
     float firstLineY;
@@ -117,31 +118,30 @@ public class WheelView2 extends View {
 
     public WheelView2(Context context, AttributeSet attrs) {
         super(context, attrs);
-        textColorOut = ContextCompat.getColor(context, R.color.pickerview_wheelview_textcolor_out);
-        textColorCenter = ContextCompat.getColor(context, R.color.pickerview_wheelview_textcolor_center);
-        dividerColor = ContextCompat.getColor(context, R.color.pickerview_wheelview_textcolor_divider);
-        //配合customTextSize使用，customTextSize为true才会发挥效果
+        textColorOut = ContextCompat.getColor(context, R.color.wheel_textcolor_out);
+        textColorCenter = ContextCompat.getColor(context, R.color.wheel_textcolor_center);
+        dividerColor = ContextCompat.getColor(context, R.color.wheel_textcolor_divider);
         textSize = getResources().getDimensionPixelSize(R.dimen.default_size);
-        customTextSize = getResources().getBoolean(R.bool.pickerview_customTextSize);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.WheelView2, 0, 0);
-            mGravity = a.getInt(R.styleable.WheelView2_pickerview_gravity, Gravity.CENTER);
-            textColorOut = a.getColor(R.styleable.WheelView2_pickerview_textColorOut, textColorOut);
-            textColorCenter = a.getColor(R.styleable.WheelView2_pickerview_textColorCenter, textColorCenter);
-            dividerColor = a.getColor(R.styleable.WheelView2_pickerview_dividerColor, dividerColor);
-            textSize = a.getDimensionPixelOffset(R.styleable.WheelView2_pickerview_textSize, textSize);
+            mGravity = a.getInt(R.styleable.WheelView2_wv2_gravity, Gravity.CENTER);
+            textColorOut = a.getColor(R.styleable.WheelView2_wv2_textColorOut, textColorOut);
+            textColorCenter = a.getColor(R.styleable.WheelView2_wv2_textColorCenter, textColorCenter);
+            dividerColor = a.getColor(R.styleable.WheelView2_wv2_dividerColor, dividerColor);
+            textSize = a.getDimensionPixelOffset(R.styleable.WheelView2_wv2_textSize, textSize);
+
+            isCyclic = a.getBoolean(R.styleable.WheelView2_wv2_cycle, false);
+            itemsVisible = a.getInteger(R.styleable.WheelView2_wv2_visibleItems, 5) + 2;
             a.recycle();
         }
-        initLoopView(context);
+        initWheelView(context);
     }
 
-    private void initLoopView(Context context) {
+    private void initWheelView(Context context) {
         this.context = context;
         handler = new MessageHandler(this);
-        gestureDetector = new GestureDetector(context, new LoopViewGestureListener(this));
+        gestureDetector = new GestureDetector(context, new WheelViewGestureListener(this));
         gestureDetector.setIsLongpressEnabled(false);
-
-        isLoop = true;
 
         totalScrollY = 0;
         initPosition = -1;
@@ -200,7 +200,7 @@ public class WheelView2 extends View {
         }
         //初始化显示的item的position，根据是否loop
         if (initPosition == -1) {
-            if (isLoop) {
+            if (isCyclic) {
                 initPosition = (adapter.getItemsCount() + 1) / 2;
             } else {
                 initPosition = 0;
@@ -264,15 +264,53 @@ public class WheelView2 extends View {
      * @param cyclic 是否循环
      */
     public final void setCyclic(boolean cyclic) {
-        isLoop = cyclic;
+        isCyclic = cyclic;
     }
 
-    public final void setTextSize(float size) {
-        if (size > 0.0F && !customTextSize) {
-            textSize = (int) (context.getResources().getDisplayMetrics().density * size);
+
+    public final void setTextSize(@Px int size) {
+        if (size > 0) {
+            textSize = size;
             paintOuterText.setTextSize(textSize);
             paintCenterText.setTextSize(textSize);
         }
+    }
+
+    public int getTextSize() {
+        return textSize;
+    }
+
+    public void setTextColorOut(@ColorInt int textColorOut) {
+        if (textColorOut >= 0){
+            this.textColorOut = textColorOut;
+            paintOuterText.setColor(textColorOut);
+        }
+    }
+
+    public int getTextColorOut() {
+        return textColorOut;
+    }
+
+    public void setTextColorCenter(@ColorInt int textColorCenter) {
+        if (textColorCenter >= 0){
+            this.textColorCenter = textColorCenter;
+            paintCenterText.setColor(textColorCenter);
+        }
+    }
+
+    public int getTextColorCenter() {
+        return textColorCenter;
+    }
+
+    public void setDividerColor(@ColorInt int dividerColor) {
+        if (dividerColor >= 0) {
+            this.dividerColor = dividerColor;
+            paintIndicator.setColor(dividerColor);
+        }
+    }
+
+    public int getDividerColor() {
+        return dividerColor;
     }
 
     public final void setCurrentItem(int position) {
@@ -286,11 +324,18 @@ public class WheelView2 extends View {
         selectedItem = initPosition;
         totalScrollY = 0;//回归顶部，不然重设setCurrentItem的话位置会偏移的，就会显示出不对位置的数据
         invalidate();
-//        onItemSelected();
     }
 
     public void setVisibleItems(int visibleItems) {
         this.itemsVisible = visibleItems + 2;
+    }
+
+    public int getItemsVisible() {
+        return itemsVisible - 2;
+    }
+
+    public boolean isCyclic() {
+        return isCyclic;
     }
 
     public final void setOnWheelChangedListener(OnWheelChangedListener onWheelChangedListener) {
@@ -331,7 +376,7 @@ public class WheelView2 extends View {
         } catch (ArithmeticException e) {
             Log.e("WheelView2", "出错了！adapter.getItemsCount() == 0，联动数据不匹配");
         }
-        if (!isLoop) {//不循环的情况
+        if (!isCyclic) {//不循环的情况
             if (preCurrentIndex < 0) {
                 preCurrentIndex = 0;
             }
@@ -357,7 +402,7 @@ public class WheelView2 extends View {
                 index++;
             }
             //判断是否循环，如果是循环数据源也使用相对循环的position获取对应的item值，如果不是循环则超出数据源范围使用""空白字符串填充，在界面上形成空白无数据的item项
-            if (isLoop) {
+            if (isCyclic) {
                 index = getLoopMappingIndex(index);
                 visibles[counter] = adapter.getItem(index);
             } else if (index < 0) {
@@ -521,7 +566,7 @@ public class WheelView2 extends View {
                 totalScrollY = (int) (totalScrollY + dy);
 
                 // 边界处理。
-                if (!isLoop) {
+                if (!isCyclic) {
                     float top = -initPosition * itemHeight;
                     float bottom = (adapter.getItemsCount() - 1 - initPosition) * itemHeight;
                     if (totalScrollY - itemHeight * 0.3 < top) {
@@ -583,6 +628,10 @@ public class WheelView2 extends View {
 
     public void setGravity(int gravity) {
         this.mGravity = gravity;
+    }
+
+    public int getGravity() {
+        return mGravity;
     }
 
     public int getTextWidth(Paint paint, String str) {

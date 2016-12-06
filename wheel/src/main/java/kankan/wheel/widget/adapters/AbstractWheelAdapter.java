@@ -31,7 +31,7 @@ public abstract class AbstractWheelAdapter<T> implements WheelViewAdapter<T> {
     private List<DataSetObserver> datasetObservers;
     
     @Override
-    public View getEmptyItem(View convertView, ViewGroup parent) {
+    public View getEmptyItem(View convertView, ViewGroup parent, int textSize) {
         return null;
     }
 

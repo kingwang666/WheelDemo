@@ -122,7 +122,7 @@ public class WheelRecycle {
 	 * @param index the index of view
 	 */
 	private void recycleView(View view, int index) {
-		int count = wheel.getViewAdapter().getItemsCount();
+		int count = wheel.getAdapter().getItemsCount();
 
 		if ((index < 0 || index >= count) && !wheel.isCyclic()) {
 			// empty view
@@ -131,7 +131,6 @@ public class WheelRecycle {
 			while (index < 0) {
 				index = count + index;
 			}
-			index %= count;
 			items = addView(view, items);
 		}
 	}

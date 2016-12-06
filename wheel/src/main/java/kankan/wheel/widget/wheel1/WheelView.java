@@ -31,12 +31,14 @@ import kankan.wheel.widget.lintener.OnWheelClickedListener;
 import kankan.wheel.widget.lintener.OnWheelScrollListener;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -79,6 +81,10 @@ public class WheelView extends View {
      */
     private int defaultColor;
     private int selectorColor;
+    /**
+     * the text size
+     */
+    private int textSize;
 
     // Wheel Values
     private int currentItem = 0;
@@ -118,7 +124,7 @@ public class WheelView extends View {
     private int firstItem;
 
     // View adapter
-    private WheelViewAdapter viewAdapter;
+    private WheelViewAdapter mAdapter;
 
     // Recycle
     private WheelRecycle recycle = new WheelRecycle(this);
@@ -128,38 +134,72 @@ public class WheelView extends View {
     private List<OnWheelScrollListener> scrollingListeners = new LinkedList<OnWheelScrollListener>();
     private List<OnWheelClickedListener> clickingListeners = new LinkedList<OnWheelClickedListener>();
 
-
-    /**
-     * Constructor
-     */
-    public WheelView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        initData(context);
-    }
-
-    /**
-     * Constructor
-     */
-    public WheelView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initData(context);
-    }
-
-    /**
-     * Constructor
-     */
     public WheelView(Context context) {
         super(context);
-        initData(context);
+        init(context, null);
     }
+
+    public WheelView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context, attrs);
+    }
+
+    public WheelView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public WheelView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs);
+    }
+
 
     /**
      * Initializes class data
      *
      * @param context the context
      */
-    private void initData(Context context) {
+    private void init(Context context, AttributeSet attrs) {
         scroller = new WheelScroller(getContext(), scrollingListener);
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.WheelView, 0, 0);
+        /**
+         * 阴影开始颜色
+         */
+        int startColor = 0;
+        /**
+         * 阴影中间颜色
+         */
+        int centerColor = 0;
+        /**
+         * 阴影结束颜色
+         */
+        int endColor = 0;
+        try {
+            drawShadows = typedArray.getBoolean(R.styleable.WheelView_wv_drawShadows, false);
+            startColor = typedArray.getColor(R.styleable.WheelView_wv_shadowsColorStart, 0xefE9E9E9);
+            centerColor = typedArray.getColor(R.styleable.WheelView_wv_shadowsColorCenter, 0xcfE9E9E9);
+            endColor = typedArray.getColor(R.styleable.WheelView_wv_shadowsColorEnd, 0x3fE9E9E9);
+
+            wheelForeground = typedArray.getResourceId(R.styleable.WheelView_wv_wheelSelectBackground, R.drawable.jd_wheel_val);
+            wheelBackground = typedArray.getResourceId(R.styleable.WheelView_wv_wheelBackground, R.drawable.jd_wheel_bg);
+
+            defaultColor = typedArray.getColor(R.styleable.WheelView_wv_textDefaultColor, 0xFF585858);
+            selectorColor = typedArray.getColor(R.styleable.WheelView_wv_textSelectColor, 0xFF585858);
+            textSize = typedArray.getDimensionPixelSize(R.styleable.WheelView_wv_textSize, getResources().getDimensionPixelSize(R.dimen.default_size));
+
+            isCyclic = typedArray.getBoolean(R.styleable.WheelView_wv_cycle, false);
+            visibleItems = typedArray.getInteger(R.styleable.WheelView_wv_visibleItems, visibleItems);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            typedArray.recycle();
+        }
+        setShadowColor(startColor, centerColor, endColor);
+        setWheelForeground(wheelForeground);
+        setWheelBackground(wheelBackground);
+        setCyclic(isCyclic);
     }
 
     // Scrolling listener
@@ -232,13 +272,21 @@ public class WheelView extends View {
         visibleItems = count;
     }
 
+    public int getTextSize() {
+        return textSize;
+    }
+
+    public void setTextSize(int textSize) {
+        this.textSize = textSize;
+    }
+
     /**
      * Gets view adapter
      *
      * @return the view adapter
      */
-    public WheelViewAdapter getViewAdapter() {
-        return viewAdapter;
+    public WheelViewAdapter getAdapter() {
+        return mAdapter;
     }
 
     // Adapter listener
@@ -258,15 +306,15 @@ public class WheelView extends View {
      * Sets view adapter. Usually new adapters contain different views, so
      * it needs to rebuild view by calling measure().
      *
-     * @param viewAdapter the view adapter
+     * @param adapter the view adapter
      */
-    public void setViewAdapter(WheelViewAdapter viewAdapter) {
-        if (this.viewAdapter != null) {
-            this.viewAdapter.unregisterDataSetObserver(dataObserver);
+    public void setAdapter(WheelViewAdapter adapter) {
+        if (this.mAdapter != null) {
+            this.mAdapter.unregisterDataSetObserver(dataObserver);
         }
-        this.viewAdapter = viewAdapter;
-        if (this.viewAdapter != null) {
-            this.viewAdapter.registerDataSetObserver(dataObserver);
+        this.mAdapter = adapter;
+        if (this.mAdapter != null) {
+            this.mAdapter.registerDataSetObserver(dataObserver);
         }
 
         invalidateWheel(true);
@@ -315,7 +363,7 @@ public class WheelView extends View {
         TextView textView = null;
         if (!(view instanceof TextView)) {
             if (view != null){
-                int id = ((AbstractWheelTextAdapter) viewAdapter).getItemTextResource();
+                int id = ((AbstractWheelTextAdapter) mAdapter).getItemTextResource();
                 textView = (TextView) view.findViewById(id);
             }
         } else {
@@ -426,11 +474,11 @@ public class WheelView extends View {
      * @param animated the animation flag
      */
     public void setCurrentItem(int index, boolean animated) {
-        if (viewAdapter == null || viewAdapter.getItemsCount() == 0) {
+        if (mAdapter == null || mAdapter.getItemsCount() == 0) {
             return; // throw?
         }
 
-        int itemCount = viewAdapter.getItemsCount();
+        int itemCount = mAdapter.getItemsCount();
         if (index < 0 || index >= itemCount) {
             if (isCyclic) {
                 while (index < 0) {
@@ -699,7 +747,7 @@ public class WheelView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (viewAdapter != null && viewAdapter.getItemsCount() > 0) {
+        if (mAdapter != null && mAdapter.getItemsCount() > 0) {
             updateView();
 
             drawItems(canvas);
@@ -767,7 +815,7 @@ public class WheelView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!isEnabled() || getViewAdapter() == null) {
+        if (!isEnabled() || getAdapter() == null) {
             return true;
         }
 
@@ -809,7 +857,7 @@ public class WheelView extends View {
         int count = scrollingOffset / itemHeight;
 
         int pos = currentItem - count;
-        int itemCount = viewAdapter.getItemsCount();
+        int itemCount = mAdapter.getItemsCount();
 
         int fixPos = scrollingOffset % itemHeight;
         if (Math.abs(fixPos) <= itemHeight / 2) {
@@ -1015,8 +1063,8 @@ public class WheelView extends View {
      * @return true if item index is not out of bounds or the wheel is cyclic
      */
     private boolean isValidItemIndex(int index) {
-        return viewAdapter != null && viewAdapter.getItemsCount() > 0 &&
-                (isCyclic || index >= 0 && index < viewAdapter.getItemsCount());
+        return mAdapter != null && mAdapter.getItemsCount() > 0 &&
+                (isCyclic || index >= 0 && index < mAdapter.getItemsCount());
     }
 
     /**
@@ -1026,20 +1074,19 @@ public class WheelView extends View {
      * @return item view or empty view if index is out of bounds
      */
     private View getItemView(int index) {
-        if (viewAdapter == null || viewAdapter.getItemsCount() == 0) {
+        if (mAdapter == null || mAdapter.getItemsCount() == 0) {
             return null;
         }
-        int count = viewAdapter.getItemsCount();
+        int count = mAdapter.getItemsCount();
         if (!isValidItemIndex(index)) {
-            return viewAdapter.getEmptyItem(recycle.getEmptyItem(), itemsLayout);
+            return mAdapter.getEmptyItem(recycle.getEmptyItem(), itemsLayout, textSize);
         } else {
             while (index < 0) {
                 index = count + index;
             }
         }
-
         index %= count;
-        return viewAdapter.getItemView(index, recycle.getItem(), itemsLayout);
+        return mAdapter.getItemView(index, recycle.getItem(), itemsLayout, textSize);
     }
 
     /**

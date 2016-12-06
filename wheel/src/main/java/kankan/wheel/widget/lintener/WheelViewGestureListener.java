@@ -4,11 +4,11 @@ import android.view.MotionEvent;
 
 import kankan.wheel.widget.wheel2.WheelView2;
 
-public class LoopViewGestureListener extends android.view.GestureDetector.SimpleOnGestureListener {
+public class WheelViewGestureListener extends android.view.GestureDetector.SimpleOnGestureListener {
 
     final WheelView2 loopView;
 
-    public LoopViewGestureListener(WheelView2 loopview) {
+    public WheelViewGestureListener(WheelView2 loopview) {
         loopView = loopview;
     }
 
