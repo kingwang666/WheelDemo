@@ -57,6 +57,7 @@
         <attr name="wv2_textColorOut" format="color"/>
         <attr name="wv2_textColorCenter" format="color"/>
         <attr name="wv2_dividerColor" format="color"/>
+        <attr name="mv2_dividerEnable" format="boolean"/>
         <!--是否循环-->
         <attr name="wv2_cycle" format="boolean"/>
         <!-- 显示个数-->

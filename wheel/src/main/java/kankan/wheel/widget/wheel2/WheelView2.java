@@ -70,6 +70,8 @@ public class WheelView2 extends View {
     static final float lineSpacingMultiplier = 1.5F;
     boolean isCyclic;
 
+    boolean divEnable;
+
     // 第一条线Y坐标值
     float firstLineY;
     //第二条线Y坐标
@@ -131,6 +133,7 @@ public class WheelView2 extends View {
             textSize = a.getDimensionPixelOffset(R.styleable.WheelView2_wv2_textSize, textSize);
 
             isCyclic = a.getBoolean(R.styleable.WheelView2_wv2_cycle, false);
+            divEnable = a.getBoolean(R.styleable.WheelView2_mv2_dividerEnable, true);
             itemsVisible = a.getInteger(R.styleable.WheelView2_wv2_visibleItems, 5) + 2;
             a.recycle();
         }
@@ -416,8 +419,10 @@ public class WheelView2 extends View {
         }
 
         //中间两条横线
-        canvas.drawLine(0.0F, firstLineY, measuredWidth, firstLineY, paintIndicator);
-        canvas.drawLine(0.0F, secondLineY, measuredWidth, secondLineY, paintIndicator);
+        if (divEnable) {
+            canvas.drawLine(0.0F, firstLineY, measuredWidth, firstLineY, paintIndicator);
+            canvas.drawLine(0.0F, secondLineY, measuredWidth, secondLineY, paintIndicator);
+        }
         //单位的Label
         if (label != null) {
             int drawRightContentStart = measuredWidth - getTextWidth(paintCenterText, label);
