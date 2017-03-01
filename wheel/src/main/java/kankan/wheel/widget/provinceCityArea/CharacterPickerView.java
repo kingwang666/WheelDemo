@@ -493,12 +493,12 @@ public class CharacterPickerView extends LinearLayout implements OnWheelChangedL
     public void setAllData(List<AllLocationsMode> locations) {
         for (AllLocationsMode location : locations) {
             mProvinceDatas.add(new DataModel(location.Id, location.Name));
-            List<CityModel> cities = location.Cities;
+            List<CityModel> cities = location.Child;
             List<DataModel> temp_cities = new LinkedList<>();
             if (cities != null) {
                 for (CityModel city : cities) {
                     temp_cities.add(new DataModel(city.Id, city.Name));
-                    mAreaDatasMap.put(city.Id, city.Districts);
+                    mAreaDatasMap.put(city.Id, city.Child);
                 }
                 mCitisDatasMap.put(location.Id, temp_cities);
             }

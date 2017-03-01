@@ -12,4 +12,8 @@ public class DataModel {
         this.Id = id;
         this.Name = name;
     }
+
+    public DataModel(){
+
+    }
 }

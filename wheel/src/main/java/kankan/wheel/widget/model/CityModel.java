@@ -3,7 +3,8 @@ package kankan.wheel.widget.model;
 import java.util.List;
 
 /**
- * Created by jiudeng007 on 2016/1/4.
+ * Created by wang
+ * on 2016/1/4
  */
 public class CityModel {
     /**
@@ -17,6 +18,6 @@ public class CityModel {
     /**
      * 地区信息，数据为数组类型
      */
-    public List<DataModel> Districts;
+    public List<DataModel> Child;
 
 }

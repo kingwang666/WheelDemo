@@ -8,7 +8,6 @@ import java.util.List;
  */
 public class AllLocationsMode {
 
-
     /**
      * 省id
      */
@@ -20,7 +19,7 @@ public class AllLocationsMode {
     /**
      * 城市信息，数据为数组类型
      */
-    public List<CityModel> Cities;
+    public List<CityModel> Child;
 
     public AllLocationsMode(int i, String aa) {
         Id = i;
