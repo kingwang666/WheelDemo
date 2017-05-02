@@ -537,8 +537,9 @@ public class WheelView2 extends View {
     private void measuredCenterContentStart(String content) {
         Rect rect = new Rect();
         paintCenterText.getTextBounds(content, 0, content.length(), rect);
-        if (measuredWidth < rect.width()) {
-            int textSize = (int) getAutofitTextSize(content, paintCenterText, measuredWidth, 0, this.textSize);
+        int width = measuredWidth - getPaddingStart() - getPaddingEnd();
+        if (width < rect.width()) {
+            int textSize = (int) getAutofitTextSize(content, paintCenterText, width, 0, this.textSize);
             paintCenterText.setTextSize(textSize);
             paintOuterText.setTextSize(textSize);
         } else {
