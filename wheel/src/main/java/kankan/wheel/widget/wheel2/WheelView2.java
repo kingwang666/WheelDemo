@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Px;
 import android.support.v4.content.ContextCompat;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -25,8 +26,8 @@ import java.util.concurrent.TimeUnit;
 import kankan.wheel.R;
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 import kankan.wheel.widget.adapters.WheelViewAdapter;
-import kankan.wheel.widget.lintener.WheelViewGestureListener;
 import kankan.wheel.widget.lintener.OnWheelChangedListener;
+import kankan.wheel.widget.lintener.WheelViewGestureListener;
 
 /**
  * Created by wang
@@ -50,8 +51,8 @@ public class WheelView2 extends View {
     ScheduledExecutorService mExecutor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?> mFuture;
 
-    Paint paintOuterText;
-    Paint paintCenterText;
+    TextPaint paintOuterText;
+    TextPaint paintCenterText;
     Paint paintIndicator;
 
     AbstractWheelTextAdapter adapter;
@@ -154,13 +155,13 @@ public class WheelView2 extends View {
     }
 
     private void initPaints() {
-        paintOuterText = new Paint();
+        paintOuterText = new TextPaint();
         paintOuterText.setColor(textColorOut);
         paintOuterText.setAntiAlias(true);
         paintOuterText.setTypeface(Typeface.MONOSPACE);
         paintOuterText.setTextSize(textSize);
 
-        paintCenterText = new Paint();
+        paintCenterText = new TextPaint();
         paintCenterText.setColor(textColorCenter);
         paintCenterText.setAntiAlias(true);
         paintCenterText.setTextScaleX(1.1F);
@@ -284,7 +285,7 @@ public class WheelView2 extends View {
     }
 
     public void setTextColorOut(@ColorInt int textColorOut) {
-        if (textColorOut >= 0){
+        if (textColorOut >= 0) {
             this.textColorOut = textColorOut;
             paintOuterText.setColor(textColorOut);
         }
@@ -295,7 +296,7 @@ public class WheelView2 extends View {
     }
 
     public void setTextColorCenter(@ColorInt int textColorCenter) {
-        if (textColorCenter >= 0){
+        if (textColorCenter >= 0) {
             this.textColorCenter = textColorCenter;
             paintCenterText.setColor(textColorCenter);
         }
@@ -514,9 +515,36 @@ public class WheelView2 extends View {
         return index;
     }
 
+    private float getAutofitTextSize(CharSequence text, TextPaint paint, float targetWidth, float low, float high) {
+        float mid = ((low + high) / 2.0f);
+        paint.setTextSize(mid);
+        float maxLineWidth;
+        maxLineWidth = paint.measureText(text, 0, text.length());
+
+        if ((high - low) < 0.5f) {
+            return low;
+        } else if (maxLineWidth > targetWidth) {
+            return getAutofitTextSize(text, paint, targetWidth, low, mid);
+        } else if (maxLineWidth < targetWidth) {
+            return getAutofitTextSize(text, paint, targetWidth, mid, high);
+        } else {
+            return mid;
+        }
+
+    }
+
 
     private void measuredCenterContentStart(String content) {
         Rect rect = new Rect();
+        paintCenterText.getTextBounds(content, 0, content.length(), rect);
+        if (measuredWidth < rect.width()) {
+            int textSize = (int) getAutofitTextSize(content, paintCenterText, measuredWidth, 0, this.textSize);
+            paintCenterText.setTextSize(textSize);
+            paintOuterText.setTextSize(textSize);
+        } else {
+            paintCenterText.setTextSize(textSize);
+            paintOuterText.setTextSize(textSize);
+        }
         paintCenterText.getTextBounds(content, 0, content.length(), rect);
         switch (mGravity) {
             case Gravity.CENTER:
