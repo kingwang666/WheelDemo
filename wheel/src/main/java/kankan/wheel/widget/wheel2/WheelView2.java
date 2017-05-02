@@ -536,17 +536,16 @@ public class WheelView2 extends View {
 
     private void measuredCenterContentStart(String content) {
         Rect rect = new Rect();
+        paintCenterText.setTextSize(textSize);
+        paintOuterText.setTextSize(textSize);
         paintCenterText.getTextBounds(content, 0, content.length(), rect);
         int width = measuredWidth - getPaddingStart() - getPaddingEnd();
         if (width < rect.width()) {
             int textSize = (int) getAutofitTextSize(content, paintCenterText, width, 0, this.textSize);
             paintCenterText.setTextSize(textSize);
             paintOuterText.setTextSize(textSize);
-        } else {
-            paintCenterText.setTextSize(textSize);
-            paintOuterText.setTextSize(textSize);
+            paintCenterText.getTextBounds(content, 0, content.length(), rect);
         }
-        paintCenterText.getTextBounds(content, 0, content.length(), rect);
         switch (mGravity) {
             case Gravity.CENTER:
                 drawCenterContentStart = (int) ((measuredWidth - rect.width()) * 0.5);
