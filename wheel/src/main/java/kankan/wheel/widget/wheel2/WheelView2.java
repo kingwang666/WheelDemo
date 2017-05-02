@@ -62,6 +62,7 @@ public class WheelView2 extends View {
     int maxTextWidth;
     int maxTextHeight;
     float itemHeight;//每行高度
+    int minTextSize;
 
     int textColorOut;
     int textColorCenter;
@@ -125,6 +126,7 @@ public class WheelView2 extends View {
         textColorCenter = ContextCompat.getColor(context, R.color.wheel_textcolor_center);
         dividerColor = ContextCompat.getColor(context, R.color.wheel_textcolor_divider);
         textSize = getResources().getDimensionPixelSize(R.dimen.default_size);
+        minTextSize = getResources().getDimensionPixelSize(R.dimen.default_min_size);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.WheelView2, 0, 0);
             mGravity = a.getInt(R.styleable.WheelView2_wv2_gravity, Gravity.CENTER);
@@ -132,7 +134,6 @@ public class WheelView2 extends View {
             textColorCenter = a.getColor(R.styleable.WheelView2_wv2_textColorCenter, textColorCenter);
             dividerColor = a.getColor(R.styleable.WheelView2_wv2_dividerColor, dividerColor);
             textSize = a.getDimensionPixelOffset(R.styleable.WheelView2_wv2_textSize, textSize);
-
             isCyclic = a.getBoolean(R.styleable.WheelView2_wv2_cycle, false);
             divEnable = a.getBoolean(R.styleable.WheelView2_mv2_dividerEnable, true);
             itemsVisible = a.getInteger(R.styleable.WheelView2_wv2_visibleItems, 5) + 2;
@@ -446,7 +447,7 @@ public class WheelView2 extends View {
                 String contentText = (String) adapter.getItemText(visibles[counter]);
 
                 //计算开始绘制的位置
-                measuredCenterContentStart(contentText);
+                contentText = measuredCenterContentStart(contentText);
                 measuredOutContentStart(contentText);
                 float translateY = (float) (radius - Math.cos(radian) * radius - (Math.sin(radian) * maxTextHeight) / 2D);
                 //根据Math.sin(radian)来更改canvas坐标系原点，然后缩放画布，使得文字高度进行缩放，形成弧形3d视觉差
@@ -533,8 +534,27 @@ public class WheelView2 extends View {
 
     }
 
+    private int getTextCount(CharSequence text, TextPaint paint, float targetWidth) {
+        float maxLineWidth;
+        int count = text.length();
+        maxLineWidth = paint.measureText(text, 0, text.length());
+        if (maxLineWidth <= targetWidth) {
+            return count;
+        }
+        for (int i = 1; i < text.length(); i++) {
+            String temp = text.subSequence(0, text.length() - i) + "...";
+            maxLineWidth = paint.measureText(temp, 0, temp.length());
+            if (maxLineWidth <= targetWidth) {
+                break;
+            } else {
+                count--;
+            }
+        }
+        return count;
+    }
 
-    private void measuredCenterContentStart(String content) {
+    private String measuredCenterContentStart(String content) {
+        int count;
         Rect rect = new Rect();
         paintCenterText.setTextSize(textSize);
         paintOuterText.setTextSize(textSize);
@@ -542,8 +562,15 @@ public class WheelView2 extends View {
         int width = measuredWidth - getPaddingStart() - getPaddingEnd();
         if (width < rect.width()) {
             int textSize = (int) getAutofitTextSize(content, paintCenterText, width, 0, this.textSize);
+            if (textSize < minTextSize){
+                textSize = minTextSize;
+            }
             paintCenterText.setTextSize(textSize);
             paintOuterText.setTextSize(textSize);
+            count = getTextCount(content, paintCenterText, width);
+            if (count != content.length()) {
+                content = content.substring(0, count) + "...";
+            }
             paintCenterText.getTextBounds(content, 0, content.length(), rect);
         }
         switch (mGravity) {
@@ -557,6 +584,7 @@ public class WheelView2 extends View {
                 drawCenterContentStart = measuredWidth - rect.width();
                 break;
         }
+        return content;
     }
 
     private void measuredOutContentStart(String content) {

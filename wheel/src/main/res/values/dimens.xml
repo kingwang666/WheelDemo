@@ -4,5 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="default_size">18sp</dimen>
+    <dimen name="default_min_size">12sp</dimen>
 
 </resources>
