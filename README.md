@@ -2,14 +2,15 @@
 用[wheel](https://code.google.com/archive/p/android-wheel/)和[androidWheelView](https://github.com/weidongjian/androidWheelView)库为基础的1至3级联动, 支持ios滚轮模式  
 ## thanks ##
 [wheel](https://code.google.com/archive/p/android-wheel/)  
-[androidWheelView](https://github.com/weidongjian/androidWheelView)
-##效果图##
+[androidWheelView](https://github.com/weidongjian/androidWheelView)  
+
+## 效果图 ##
 <img src="img/multi.gif" width=200></img> <img src="img/ios_multi.gif" width=200></img>  
   
 
 <img src="img/wheel.gif" width=200></img> <img src="img/ios_wheel.gif" width=200></img>
-##使用##
-###CharacterPickerView###
+## 使用 ##
+### CharacterPickerView ###
 xml 
     
         <com.wang.wheel.widget.CharacterPickerView
@@ -154,7 +155,7 @@ java
                }
             });
 
-###IOSCharacterPickerView###
+### IOSCharacterPickerView ###
 xml  
 
         <com.wang.wheel.widget.IOSCharacterPickerView
@@ -283,7 +284,7 @@ java
         });
        }  
 
-###WheelView###
+### WheelView ###
 xml 
     
         <com.wang.wheel.widget.WheelView
@@ -379,7 +380,7 @@ java
 
         WheelView wheelView = (WheelView) findViewById(R.id.picker_view);
         wheelView.setAdapter(new ArrayWheelAdapter<>(this, mProvinceDatas));  
-###IOSWheelView###
+### IOSWheelView ###
 xml 
     
         <com.wang.wheel.widget.IOSWheelView
