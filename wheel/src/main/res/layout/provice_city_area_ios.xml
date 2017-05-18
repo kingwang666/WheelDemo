@@ -30,31 +30,31 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <kankan.wheel.widget.wheel2.WheelView2
+        <com.wang.wheel.widget.IOSWheelView
             android:id="@+id/id_province"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingStart="3dp"
             android:paddingEnd="3dp">
-        </kankan.wheel.widget.wheel2.WheelView2>
+        </com.wang.wheel.widget.IOSWheelView>
 
-        <kankan.wheel.widget.wheel2.WheelView2
+        <com.wang.wheel.widget.IOSWheelView
             android:id="@+id/id_city"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingStart="3dp"
             android:paddingEnd="3dp">
-        </kankan.wheel.widget.wheel2.WheelView2>
+        </com.wang.wheel.widget.IOSWheelView>
 
-        <kankan.wheel.widget.wheel2.WheelView2
+        <com.wang.wheel.widget.IOSWheelView
             android:id="@+id/id_area"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingStart="3dp"
             android:paddingEnd="3dp">
-        </kankan.wheel.widget.wheel2.WheelView2>
+        </com.wang.wheel.widget.IOSWheelView>
     </LinearLayout>
 </merge>

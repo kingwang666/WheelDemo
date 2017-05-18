@@ -6,40 +6,37 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <kankan.wheel.widget.provinceCityArea.CharacterPickerView
-        android:id="@+id/test"
-        android:layout_width="match_parent"
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:cp_drawShadows="true"
-        app:cp_listCount="3"
-        app:cp_visibleItems="5">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="64dp"
+        android:text="multi picker"
+        android:onClick="onMultiPicker"/>
 
-    </kankan.wheel.widget.provinceCityArea.CharacterPickerView>
-
-    <kankan.wheel.widget.provinceCityArea.IOSCharacterPickerView
-        android:id="@+id/test2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </kankan.wheel.widget.provinceCityArea.IOSCharacterPickerView>
-
-
-    <kankan.wheel.widget.wheel1.WheelView
-        android:id="@+id/wheel_test"
-        android:layout_width="match_parent"
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:wv_cycle="true"
-        app:wv_drawShadows="true"
-        app:wv_textSelectColor="@color/colorAccent"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="ios multi picker"
+        android:onClick="onIOSMultiPicker"/>
 
-    <kankan.wheel.widget.wheel2.WheelView2
-        android:id="@+id/wheel2_test"
-        android:layout_width="match_parent"
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:wv2_textColorCenter="@color/colorAccent"
-        app:wv2_visibleItems="4"
-        app:wv2_cycle="true"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="wheel"
+        android:onClick="onWheel"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="ios wheel"
+        android:onClick="onIOSWheel"/>
 
 
 </LinearLayout>

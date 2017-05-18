@@ -2,15 +2,14 @@
 <resources>
     <color name="wheel_btn_nor">#54a3fa</color>
     <color name="wheel_btn_pre">#CCCCCC</color>
-    <color name="wheel_start_color">#efE9E9E9</color>
-    <color name="wheel_center_color">#cfE9E9E9</color>
-    <color name="wheel_end_color">#3fE9E9E9</color>
-    <color name="back_color">#ffE9E9E9</color>
+    <color name="wheel_start_color">#95ffffff</color>
+    <color name="wheel_center_color">#53ffffff</color>
+    <color name="wheel_end_color">#00ffffff</color>
+    <color name="transparent">#00000000</color>
     <color name="default_text_color">#FF585858</color>
 
-    <color name="wheel_textcolor_out">#a8a8a8</color>
-    <color name="wheel_textcolor_center">#2a2a2a</color>
-    <color name="wheel_textcolor_divider">#d5d5d5</color>
-    <color name="bgColor_overlay">#60000000</color>
+    <color name="wheel_text_color_out">#a8a8a8</color>
+    <color name="wheel_text_color_center">#2a2a2a</color>
+    <color name="wheel_color_divider">#d5d5d5</color>
 
 </resources>

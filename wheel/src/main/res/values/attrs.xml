@@ -7,12 +7,12 @@
         <attr name="wv_shadowsColorStart" format="color"/>
         <attr name="wv_shadowsColorCenter" format="color"/>
         <attr name="wv_shadowsColorEnd" format="color"/>
-        <!--选择背景和最基础背景-->
-        <attr name="wv_wheelBackground" format="reference"/>
-        <attr name="wv_wheelSelectBackground" format="reference"/>
+
+        <attr name="wv_dividerColor" format="color"/>
+        <attr name="wv_dividerEnable" format="boolean"/>
         <!--文字颜色-->
-        <attr name="wv_textDefaultColor" format="color"/>
-        <attr name="wv_textSelectColor" format="color"/>
+        <attr name="wv_textColorUnselected" format="color"/>
+        <attr name="wv_textColorSelected" format="color"/>
         <attr name="wv_textSize" format="dimension"/>
         <!--是否循环-->
         <attr name="wv_cycle" format="boolean"/>
@@ -28,10 +28,11 @@
         <attr name="cp_shadowsColorEnd" format="color"/>
         <!--选择背景和最基础背景-->
         <attr name="cp_wheelBackground" format="reference"/>
-        <attr name="cp_wheelSelectBackground" format="reference"/>
+        <attr name="cp_dividerColor" format="color"/>
+        <attr name="cp_dividerEnable" format="boolean"/>
         <!--文字颜色-->
-        <attr name="cp_textDefaultColor" format="color"/>
-        <attr name="cp_textSelectColor" format="color"/>
+        <attr name="cp_textColorUnselected" format="color"/>
+        <attr name="cp_textColorSelected" format="color"/>
         <attr name="cp_textSize" format="dimension"/>
         <!--按钮相关-->
         <attr name="cp_cancelTextColor" format="reference"/>
@@ -47,21 +48,21 @@
     </declare-styleable>
 
 
-    <declare-styleable name="WheelView2">
-        <attr name="wv2_gravity">
+    <declare-styleable name="IOSWheelView">
+        <attr name="iwv_gravity">
             <enum name="center" value="17"/>
             <enum name="left" value="3"/>
             <enum name="right" value="5"/>
         </attr>
-        <attr name="wv2_textSize" format="dimension"/>
-        <attr name="wv2_textColorOut" format="color"/>
-        <attr name="wv2_textColorCenter" format="color"/>
-        <attr name="wv2_dividerColor" format="color"/>
-        <attr name="mv2_dividerEnable" format="boolean"/>
+        <attr name="iwv_textSize" format="dimension"/>
+        <attr name="iwv_textColorUnselected" format="color"/>
+        <attr name="iwv_textColorSelected" format="color"/>
+        <attr name="iwv_dividerColor" format="color"/>
+        <attr name="iwv_dividerEnable" format="boolean"/>
         <!--是否循环-->
-        <attr name="wv2_cycle" format="boolean"/>
+        <attr name="iwv_cycle" format="boolean"/>
         <!-- 显示个数-->
-        <attr name="wv2_visibleItems" format="integer"/>
+        <attr name="iwv_visibleItems" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="IOSCharacterPickerView">
@@ -80,10 +81,12 @@
             <enum name="right" value="5"/>
         </attr>
         <attr name="icp_textSize" format="dimension"/>
-        <attr name="icp_textColorOut" format="color"/>
-        <attr name="icp_textColorCenter" format="color"/>
-        <attr name="icp_dividerColor" format="color"/>
+        <attr name="icp_textColorUnselected" format="color"/>
+        <attr name="icp_textColorSelected" format="color"/>
+
         <attr name="icp_wheelBackground" format="reference"/>
+        <attr name="icp_dividerColor" format="color"/>
+        <attr name="icp_dividerEnable" format="boolean"/>
         <!--是否循环-->
         <attr name="icp_cycle" format="boolean"/>
         <!-- 显示个数-->
