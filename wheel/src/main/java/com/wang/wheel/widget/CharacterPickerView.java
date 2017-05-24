@@ -427,8 +427,8 @@ public class CharacterPickerView extends LinearLayout implements OnWheelChangedL
                 }
             }
         }
-        updateCities();
-        mCity.setCurrentItem(mCityPosition);
+        updateCities(mCityPosition);
+//        mCity.setCurrentItem(mCityPosition);
     }
 
     /**
@@ -448,8 +448,8 @@ public class CharacterPickerView extends LinearLayout implements OnWheelChangedL
                 }
             }
         }
-        updateAreas();
-        mArea.setCurrentItem(mAreaPosition);
+        updateAreas(mAreaPosition);
+//        mArea.setCurrentItem(mAreaPosition);
     }
 
     /**
@@ -502,9 +502,9 @@ public class CharacterPickerView extends LinearLayout implements OnWheelChangedL
     @Override
     public void onChanged(View wheel, int oldValue, int newValue) {
         if (wheel == mProvince) {
-            updateCities();
+            updateCities(0);
         } else if (wheel == mCity) {
-            updateAreas();
+            updateAreas(0);
         } else if (wheel == mArea) {
             mCurrentArea = new DataModel(0, "");
             if (!TextUtils.isEmpty(mCurrentCity.Name)) {
@@ -521,7 +521,7 @@ public class CharacterPickerView extends LinearLayout implements OnWheelChangedL
     /**
      * 更新第三项
      */
-    private void updateAreas() {
+    private void updateAreas(int position) {
         int pCurrent = mCity.getCurrentItem();
         List<DataModel> cities = mCitisDatasMap.get(mCurrentProvince.Id);
         List<DataModel> areas;
@@ -540,10 +540,10 @@ public class CharacterPickerView extends LinearLayout implements OnWheelChangedL
             }
         }
         if (mListCount > 2) {
-            mCurrentArea = areas.get(0);
+            mCurrentArea = areas.get(position);
             mAreaAdapter = new ArrayWheelAdapter<>(getContext(), areas);
             mArea.setAdapter(mAreaAdapter);
-            mArea.setCurrentItem(0);
+            mArea.setCurrentItem(position);
 
         }
     }
@@ -552,7 +552,7 @@ public class CharacterPickerView extends LinearLayout implements OnWheelChangedL
     /**
      * 更新第二项
      */
-    private void updateCities() {
+    private void updateCities(int position) {
         int pCurrent = mProvince.getCurrentItem();
         mCurrentProvince = mProvinceDatas.get(pCurrent);
         List<DataModel> cities = mCitisDatasMap.get(mCurrentProvince.Id);
@@ -562,8 +562,8 @@ public class CharacterPickerView extends LinearLayout implements OnWheelChangedL
         }
         mCityAdapter = new ArrayWheelAdapter<>(getContext(), cities);
         mCity.setAdapter(mCityAdapter);
-        mCity.setCurrentItem(0);
-        updateAreas();
+        mCity.setCurrentItem(position);
+        updateAreas(0);
 
     }
 

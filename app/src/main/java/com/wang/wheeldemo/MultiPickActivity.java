@@ -21,7 +21,7 @@ public class MultiPickActivity extends BaseWheelActivity {
     @Override
     protected void afterView() {
         CharacterPickerView pickerView = (CharacterPickerView) findViewById(R.id.picker_view);
-        pickerView.setDefault(20, 0, 0);
+        pickerView.setDefault(20, 20002, 1320);
         pickerView.setAllData(mLocations);
         pickerView.setButtonClickListener(new OnButtonClickListener() {
             @Override

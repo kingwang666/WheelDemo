@@ -21,6 +21,7 @@ public class IOSMultiPickActivity extends BaseWheelActivity {
     @Override
     protected void afterView() {
         IOSCharacterPickerView pickerView = (IOSCharacterPickerView) findViewById(R.id.picker_view);
+        pickerView.setDefault(20, 20002, 1320);
         pickerView.setProvince(mProvinceDatas);
         pickerView.setCity(mCitisDatasMap);
         pickerView.setArea(mAreaDatasMap);
