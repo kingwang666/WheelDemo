@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.wang.wheel.widget.IOSWheelView
+        android:id="@+id/year_wheel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingEnd="3dp"
+        android:paddingStart="3dp"
+        app:iwv_visibleItems="3"
+        app:iwv_cycle="true"
+        app:iwv_lineSpacingMultiplier="2.5">
+    </com.wang.wheel.widget.IOSWheelView>
+
+    <com.wang.wheel.widget.IOSWheelView
+        android:id="@+id/month_wheel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingEnd="3dp"
+        android:paddingStart="3dp"
+        app:iwv_cycle="true"
+        app:iwv_visibleItems="3"
+        app:iwv_lineSpacingMultiplier="2.5">
+    </com.wang.wheel.widget.IOSWheelView>
+
+    <com.wang.wheel.widget.IOSWheelView
+        android:id="@+id/day_wheel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingEnd="3dp"
+        android:paddingStart="3dp"
+        app:iwv_cycle="true"
+        app:iwv_visibleItems="3"
+        app:iwv_lineSpacingMultiplier="2.5">
+    </com.wang.wheel.widget.IOSWheelView>
+
+</merge>

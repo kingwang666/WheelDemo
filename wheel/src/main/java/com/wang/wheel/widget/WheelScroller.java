@@ -53,7 +53,7 @@ class WheelScroller {
         void onFinished();
         
         /**
-         * Justifying callback called to justify a view when scrolling is ended
+         * Justifying callback called to justify max view when scrolling is ended
          */
         void onJustify();
     }

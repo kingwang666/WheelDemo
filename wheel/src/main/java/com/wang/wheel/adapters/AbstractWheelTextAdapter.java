@@ -37,10 +37,6 @@ public abstract class AbstractWheelTextAdapter<T> extends AbstractWheelAdapter<T
     protected static final int NO_RESOURCE = 0;
     
 
-    
-
-
-    
     // Current context
     protected Context context;
     // Layout inflater
@@ -158,7 +154,7 @@ public abstract class AbstractWheelTextAdapter<T> extends AbstractWheelAdapter<T
                     text = "";
                 }
                 textView.setText(text);
-    
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
                 if (itemResourceId == TEXT_VIEW_ITEM_RESOURCE) {
                     configureTextView(textView, textSize);
                 }

@@ -37,7 +37,6 @@ import com.wang.wheel.listener.WheelViewGestureListener;
 
 public class IOSWheelView extends View {
 
-
     public enum ACTION {
         // 点击，滑翔(滑到尽头)，拖拽事件
         CLICK, FLING, DAGGLE
@@ -70,7 +69,7 @@ public class IOSWheelView extends View {
     int dividerColor;
 
     // 条目间距倍数
-    static final float lineSpacingMultiplier = 2.0F;
+    float lineSpacingMultiplier = 2.0F;
     boolean isCyclic;
 
     boolean divEnable;
@@ -138,6 +137,7 @@ public class IOSWheelView extends View {
             isCyclic = a.getBoolean(R.styleable.IOSWheelView_iwv_cycle, false);
             divEnable = a.getBoolean(R.styleable.IOSWheelView_iwv_dividerEnable, true);
             itemsVisible = a.getInteger(R.styleable.IOSWheelView_iwv_visibleItems, 5) + 2;
+            lineSpacingMultiplier = a.getFloat(R.styleable.IOSWheelView_iwv_lineSpacingMultiplier, lineSpacingMultiplier);
             a.recycle();
         }
         initWheelView(context);
@@ -351,7 +351,9 @@ public class IOSWheelView extends View {
     }
 
     public final void setAdapter(AbstractWheelTextAdapter adapter) {
-        this.adapter = adapter;
+        if (this.adapter != adapter) {
+            this.adapter = adapter;
+        }
         remeasure();
         invalidate();
     }
@@ -414,9 +416,9 @@ public class IOSWheelView extends View {
                 index = getLoopMappingIndex(index);
                 visibles[counter] = adapter.getItem(index);
             } else if (index < 0) {
-                visibles[counter] = "";
+                visibles[counter] = null;
             } else if (index > adapter.getItemsCount() - 1) {
-                visibles[counter] = "";
+                visibles[counter] = null;
             } else {
                 visibles[counter] = adapter.getItem(index);
             }

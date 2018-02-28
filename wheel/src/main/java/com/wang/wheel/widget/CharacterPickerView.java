@@ -564,7 +564,6 @@ public class CharacterPickerView extends LinearLayout implements OnWheelChangedL
         mCity.setAdapter(mCityAdapter);
         mCity.setCurrentItem(position);
         updateAreas(0);
-
     }
 
     @Override

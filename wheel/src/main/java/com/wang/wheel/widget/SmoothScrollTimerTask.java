@@ -4,10 +4,10 @@ import java.util.TimerTask;
 
 final class SmoothScrollTimerTask extends TimerTask {
 
-    int realTotalOffset;
-    int realOffset;
-    int offset;
-    final IOSWheelView loopView;
+    private int realTotalOffset;
+    private int realOffset;
+    private int offset;
+    private final IOSWheelView loopView;
 
     SmoothScrollTimerTask(IOSWheelView loopview, int offset) {
         this.loopView = loopview;

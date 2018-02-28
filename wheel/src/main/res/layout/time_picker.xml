@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.wang.wheel.widget.WheelView
+        android:id="@+id/year_wheel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingEnd="3dp"
+        android:paddingStart="3dp"
+        app:wv_visibleItems="3"
+        app:wv_cycle="true"
+        app:wv_textSize="16sp">
+    </com.wang.wheel.widget.WheelView>
+
+    <com.wang.wheel.widget.WheelView
+        android:id="@+id/month_wheel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingEnd="3dp"
+        android:paddingStart="3dp"
+        app:wv_cycle="true"
+        app:wv_visibleItems="3"
+        app:wv_textSize="16sp">
+    </com.wang.wheel.widget.WheelView>
+
+    <com.wang.wheel.widget.WheelView
+        android:id="@+id/day_wheel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingEnd="3dp"
+        android:paddingStart="3dp"
+        app:wv_cycle="true"
+        app:wv_visibleItems="3"
+        app:wv_textSize="16sp">
+    </com.wang.wheel.widget.WheelView>
+
+</merge>

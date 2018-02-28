@@ -59,6 +59,7 @@
         <attr name="iwv_textColorSelected" format="color"/>
         <attr name="iwv_dividerColor" format="color"/>
         <attr name="iwv_dividerEnable" format="boolean"/>
+        <attr name="iwv_lineSpacingMultiplier" format="float"/>
         <!--是否循环-->
         <attr name="iwv_cycle" format="boolean"/>
         <!-- 显示个数-->
@@ -92,6 +93,20 @@
         <!-- 显示个数-->
         <attr name="icp_visibleItems" format="integer"/>
 
+    </declare-styleable>
+
+    <declare-styleable name="IOSTimePickerView">
+        <attr name="itp_startYear" format="integer"/>
+        <attr name="itp_endYear" format="integer"/>
+        <attr name="itp_minDate" format="string"/>
+        <attr name="itp_maxDate" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="TimePickerView">
+        <attr name="tp_startYear" format="integer"/>
+        <attr name="tp_endYear" format="integer"/>
+        <attr name="tp_minDate" format="string"/>
+        <attr name="tp_maxDate" format="string"/>
     </declare-styleable>
 
 </resources>

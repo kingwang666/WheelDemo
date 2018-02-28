@@ -501,7 +501,6 @@ public class IOSCharacterPickerView extends LinearLayout implements OnWheelChang
         mCity.setAdapter(mCityAdapter);
         mCity.setCurrentItem(position);
         updateAreas(0);
-
     }
 
     @Override

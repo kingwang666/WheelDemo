@@ -51,6 +51,9 @@ public class ArrayWheelAdapter<T> extends AbstractWheelTextAdapter<T> {
 
     @Override
     public CharSequence getItemText(T item) {
+        if (item == null){
+            return "";
+        }
         if (item instanceof CharSequence) {
             return (CharSequence) item;
         }

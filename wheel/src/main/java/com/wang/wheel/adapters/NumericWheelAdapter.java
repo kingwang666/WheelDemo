@@ -69,6 +69,22 @@ public class NumericWheelAdapter extends AbstractWheelTextAdapter<Integer> {
         this.format = format;
     }
 
+    public void setMinValue(int minValue) {
+        this.minValue = minValue;
+    }
+
+    public void setMaxValue(int maxValue) {
+        this.maxValue = maxValue;
+    }
+
+    @Override
+    public CharSequence getItemText(Integer item) {
+        if (item == null){
+            return "";
+        }
+        return format != null ? String.format(format, item) : Integer.toString(item);
+    }
+
     @Override
     public CharSequence getItemText(int index) {
         if (index >= 0 && index < getItemsCount()) {
@@ -77,6 +93,7 @@ public class NumericWheelAdapter extends AbstractWheelTextAdapter<Integer> {
         }
         return null;
     }
+
 
     @Override
     public int getItemsCount() {

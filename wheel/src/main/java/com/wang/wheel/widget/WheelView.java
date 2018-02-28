@@ -36,6 +36,7 @@ import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
@@ -43,6 +44,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -333,13 +335,15 @@ public class WheelView extends View {
 
     /**
      * Notifies changing listeners
-     *
-     * @param oldValue the old wheel value
+     *  @param oldValue the old wheel value
      * @param newValue the new wheel value
+     * @param notify
      */
-    protected void notifyChangingListeners(int oldValue, int newValue) {
-        for (OnWheelChangedListener listener : changingListeners) {
-            listener.onChanged(this, oldValue, newValue);
+    protected void notifyChangingListeners(int oldValue, int newValue, boolean notify) {
+        if (notify) {
+            for (OnWheelChangedListener listener : changingListeners) {
+                listener.onChanged(this, oldValue, newValue);
+            }
         }
 
         if (oldValue < 0 || newValue < 0 || itemsLayout == null)
@@ -466,7 +470,7 @@ public class WheelView extends View {
      * @param index    the item index
      * @param animated the animation flag
      */
-    public void setCurrentItem(int index, boolean animated) {
+    public void setCurrentItem(int index, boolean animated, boolean notify) {
         if (mAdapter == null || mAdapter.getItemsCount() == 0) {
             return; // throw?
         }
@@ -498,7 +502,7 @@ public class WheelView extends View {
                 int old = currentItem;
                 currentItem = index;
 
-                notifyChangingListeners(old, currentItem);
+                notifyChangingListeners(old, currentItem, notify);
 
                 invalidate();
             }
@@ -511,7 +515,7 @@ public class WheelView extends View {
      * @param index the item index
      */
     public void setCurrentItem(int index) {
-        setCurrentItem(index, false);
+        setCurrentItem(index, false, false);
     }
 
     /**
@@ -870,7 +874,7 @@ public class WheelView extends View {
 
         int offset = scrollingOffset;
         if (pos != currentItem) {
-            setCurrentItem(pos, false);
+            setCurrentItem(pos, false, true);
         } else {
             invalidate();
         }

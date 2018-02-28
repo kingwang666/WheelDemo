@@ -38,5 +38,16 @@
         android:text="ios wheel"
         android:onClick="onIOSWheel"/>
 
+    <com.wang.wheel.widget.TimePickerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </com.wang.wheel.widget.TimePickerView>
+
+    <com.wang.wheel.widget.IOSTimePickerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </com.wang.wheel.widget.IOSTimePickerView>
 
 </LinearLayout>
