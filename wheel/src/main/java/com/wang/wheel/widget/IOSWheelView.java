@@ -7,9 +7,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Handler;
-import android.support.annotation.ColorInt;
-import android.support.annotation.Px;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.ColorInt;
+import androidx.annotation.Px;
+import androidx.core.content.ContextCompat;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -69,7 +69,7 @@ public class IOSWheelView extends View {
     int dividerColor;
 
     // 条目间距倍数
-    float lineSpacingMultiplier = 2.0F;
+    float lineSpacingMultiplier = 2.3F;
     boolean isCyclic;
 
     boolean divEnable;
